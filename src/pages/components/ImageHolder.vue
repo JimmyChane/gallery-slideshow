@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   type MaybeElement,
+  useDebounceFn,
   useElementBounding,
   watchThrottled,
 } from '@vueuse/core';
@@ -12,7 +13,7 @@ const props = defineProps<{ model: ImageHolderModel; parentScorllX: number }>();
 
 const selfRef = ref<MaybeElement>();
 
-const { width, height, x, y } = useElementBounding(selfRef);
+const { width, height, x, y, update } = useElementBounding(selfRef);
 
 const style = computed<StyleValue>(() => {
   const style: StyleValue = {};
@@ -36,9 +37,13 @@ watchThrottled(
     props.model.height = height.value;
     props.model.x = x.value + props.parentScorllX;
     props.model.y = y.value;
+
+    invalidateBounding();
   },
   { throttle: 200, leading: true, trailing: true },
 );
+
+const invalidateBounding = useDebounceFn(update, 300);
 
 onMounted(async () => {
   const content = await new Promise<string>((r) => {
@@ -64,7 +69,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .home-image-holder {
-  width: 16rem;
+  width: 16em;
 
   transition: all 400ms ease;
 

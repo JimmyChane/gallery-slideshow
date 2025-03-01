@@ -17,7 +17,7 @@ const style = computed<StyleValue>(() => {
 
 <template>
   <div class="home-image-content" :style="style">
-    <img :src="model.src" />
+    <img v-if="model.src.length" :src="model.src" />
   </div>
 </template>
 
