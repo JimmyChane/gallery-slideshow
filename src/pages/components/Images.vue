@@ -1,14 +1,59 @@
 <script setup lang="ts">
+import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
+import { onMounted, ref } from 'vue';
+
 import { ImageHolderModel } from '@/app.store';
 
 import ImageContent from './ImageContent.vue';
 import ImageHolder from './ImageHolder.vue';
 
 defineProps<{ models: ImageHolderModel[] }>();
+
+const selfRef = ref<HTMLDivElement>();
+const speed = ref(0.7);
+
+const { x } = useScroll(selfRef);
+
+let offset = 0;
+
+const { resume: resumeSlide, pause: pauseSlide } = useRafFn(() => {
+  if (!selfRef.value) return;
+
+  offset = offset + speed.value;
+
+  if (offset >= selfRef.value.scrollWidth - selfRef.value.offsetWidth) {
+    offset = 0;
+  }
+
+  x.value = offset;
+});
+
+const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(
+  x,
+  () => (offset = x.value),
+);
+
+const resumeSlideshow = () => {
+  pauseWatchScroll();
+  resumeSlide();
+};
+const pauseSlideshow = () => {
+  pauseSlide();
+  resumeWatchScroll();
+};
+
+onMounted(() => {
+  // resumeSlideshow();
+});
 </script>
 
 <template>
-  <div class="images">
+  <div
+    ref="selfRef"
+    class="images"
+    @mouseleave="() => resumeSlideshow()"
+    @mouseenter="() => pauseSlideshow()"
+  >
     <div class="images-contents">
       <ImageHolder
         v-for="holder of models"

@@ -29,7 +29,7 @@ const style = computed<StyleValue>(() => {
   border-radius: 1em;
   background-color: rgba(255, 255, 255, 0.2);
 
-  transition: all 400ms ease;
+  transition: all 400ms ease-in-out;
   overflow: hidden;
 
   pointer-events: none;
