@@ -46,6 +46,8 @@ export class ImageHolderModel {
   x: number = 0;
   y: number = 0;
 
+  isHovering: boolean = false;
+
   constructor(readonly file: File) {}
 
   getBestAspectRatio(): [number, number] | undefined {

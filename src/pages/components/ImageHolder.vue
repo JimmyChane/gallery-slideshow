@@ -1,49 +1,55 @@
 <script setup lang="ts">
 import {
-  type MaybeElement,
   useDebounceFn,
-  useElementBounding,
-  watchThrottled,
+  useElementHover,
+  useResizeObserver,
+  useThrottleFn,
 } from '@vueuse/core';
-import { type StyleValue, computed, onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import type { ImageHolderModel } from '@/app.store';
 
-const props = defineProps<{ model: ImageHolderModel; parentScorllX: number }>();
+const props = defineProps<{ model: ImageHolderModel }>();
 
-const selfRef = ref<MaybeElement>();
+const selfRef = ref<HTMLButtonElement>();
 
-const { width, height, x, y, update } = useElementBounding(selfRef);
+useResizeObserver(selfRef, () => invalidateBounding());
 
-const style = computed<StyleValue>(() => {
-  const style: StyleValue = {};
+const invalidateBounding = () => {
+  if (!selfRef.value) return;
 
-  const ratio = props.model.getBestAspectRatio();
+  const width = selfRef.value.offsetWidth;
+  const height = selfRef.value.offsetHeight;
+  const x = selfRef.value.offsetLeft;
+  const y = selfRef.value.offsetTop;
 
-  if (ratio !== undefined) {
-    style['min-height'] = `calc(16em * ${ratio[1] / ratio[0]})`;
-    // style.gridColumn = ratio[0];
-    // style.gridRow = ratio[1];
-    // style.aspectRatio = `${ratio[0]} / ${ratio[1]}`;
-  }
-
-  return style;
-});
-
-watchThrottled(
-  [width, height, x, y],
-  () => {
-    props.model.width = width.value;
-    props.model.height = height.value;
-    props.model.x = x.value + props.parentScorllX;
-    props.model.y = y.value;
-
-    invalidateBounding();
+  setModelThrottle(width, height, x, y);
+  setModelDebounce(width, height, x, y);
+};
+const setModelThrottle = useThrottleFn(
+  (width: number, height: number, x: number, y: number) => {
+    props.model.width = width;
+    props.model.height = height;
+    props.model.x = x;
+    props.model.y = y;
   },
-  { throttle: 200, leading: true, trailing: true },
+  500,
+  true,
+  true,
+);
+const setModelDebounce = useDebounceFn(
+  (width: number, height: number, x: number, y: number) => {
+    props.model.width = width;
+    props.model.height = height;
+    props.model.x = x;
+    props.model.y = y;
+  },
+  600,
 );
 
-const invalidateBounding = useDebounceFn(update, 300);
+const isHovering = useElementHover(selfRef);
+
+watch(isHovering, () => (props.model.isHovering = isHovering.value));
 
 onMounted(async () => {
   const content = await new Promise<string>((r) => {
@@ -59,28 +65,29 @@ onMounted(async () => {
 </script>
 
 <template>
-  <img
-    ref="selfRef"
-    :style="style"
-    class="home-image-holder"
-    :src="model.src"
-  />
+  <button class="image-holder" ref="selfRef">
+    <img :src="model.src" />
+  </button>
 </template>
 
 <style lang="scss" scoped>
-.home-image-holder {
+.image-holder {
   width: 16em;
-
-  transition: all 400ms ease;
 
   flex-grow: 1;
 
-  object-fit: cover;
   display: flex;
   overflow: hidden;
 
   opacity: 0;
-  pointer-events: none;
-  user-select: none;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  & > img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

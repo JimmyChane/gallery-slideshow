@@ -11,6 +11,7 @@ const style = computed<StyleValue>(() => {
     height: `${props.model.height}px`,
     left: `${props.model.x}px`,
     top: `${props.model.y}px`,
+    transform: props.model.isHovering ? `scale(1.05)` : undefined,
   };
 });
 </script>
@@ -31,9 +32,8 @@ const style = computed<StyleValue>(() => {
   transition: all 400ms ease;
   overflow: hidden;
 
-  // &:hover {
-  //   transform: scale(1.05);
-  // }
+  pointer-events: none;
+  user-select: none;
 
   & > img {
     width: 100%;
