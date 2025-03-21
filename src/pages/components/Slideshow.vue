@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
-import { onMounted, ref } from 'vue';
+import { ref, useTemplateRef, watch } from 'vue';
 
-import { ImageHolderModel } from '@/app.store';
+import type { ImageHolderModel } from '@/model/ImageHolder.model';
 
-import ImageContent from './ImageContent.vue';
-import ImageHolder from './ImageHolder.vue';
+import SlideshowHolder from './Slideshow-Holder.vue';
+import SlideshowImage from './Slideshow-Image.vue';
 
-defineProps<{ models: ImageHolderModel[] }>();
+const props = defineProps<{ models: ImageHolderModel[] }>();
 
-const selfRef = ref<HTMLDivElement>();
+const selfRef = useTemplateRef<HTMLDivElement>('selfRef');
 const speed = ref(0.7);
 
 const { x } = useScroll(selfRef);
@@ -42,8 +42,11 @@ const pauseSlideshow = () => {
   resumeWatchScroll();
 };
 
-onMounted(() => {
-  // resumeSlideshow();
+watch(x, () => {
+  for (const model of props.models) {
+    model.screenX = model.x - x.value;
+    model.screenY = model.y;
+  }
 });
 </script>
 
@@ -55,14 +58,14 @@ onMounted(() => {
     @mouseenter="() => pauseSlideshow()"
   >
     <div class="images-contents">
-      <ImageHolder
+      <SlideshowHolder
         v-for="holder of models"
         :key="holder.file.name"
         style="z-index: 0"
         :model="holder"
       />
 
-      <ImageContent
+      <SlideshowImage
         v-for="holder of models"
         :key="holder.file.name"
         style="z-index: 1"
@@ -80,17 +83,16 @@ onMounted(() => {
   overflow-y: hidden;
   overflow-x: auto;
 
+  scrollbar-width: 0px;
   &::-webkit-scrollbar {
     display: none;
   }
-  scrollbar-width: 0px;
 
   .images-contents {
     position: relative;
 
     width: max-content;
     height: 100%;
-    // margin-inline: auto;
 
     gap: 1em;
     padding: 1em;

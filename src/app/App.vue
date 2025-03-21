@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
+
+import ImageViewerOverlay from './components/ImageViewerOverlay.vue';
 </script>
 
 <template>
-  <div class="app">
+  <div class="app" style="z-index: 1">
     <RouterView />
+
+    <ImageViewerOverlay style="z-index: 2" />
   </div>
 </template>
 

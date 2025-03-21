@@ -5,13 +5,16 @@ import {
   useResizeObserver,
   useThrottleFn,
 } from '@vueuse/core';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, useTemplateRef, watch } from 'vue';
 
-import type { ImageHolderModel } from '@/app.store';
+import { useAppStore } from '@/app.store';
+import type { ImageHolderModel } from '@/model/ImageHolder.model';
 
 const props = defineProps<{ model: ImageHolderModel }>();
 
-const selfRef = ref<HTMLButtonElement>();
+const appStore = useAppStore();
+
+const selfRef = useTemplateRef<HTMLButtonElement>('selfRef');
 
 useResizeObserver(selfRef, () => invalidateBounding());
 
@@ -26,28 +29,26 @@ const invalidateBounding = () => {
   setModelThrottle(width, height, x, y);
   setModelDebounce(width, height, x, y);
 };
-const setModelThrottle = useThrottleFn(
-  (width: number, height: number, x: number, y: number) => {
-    props.model.width = width;
-    props.model.height = height;
-    props.model.x = x;
-    props.model.y = y;
-  },
-  500,
-  true,
-  true,
-);
-const setModelDebounce = useDebounceFn(
-  (width: number, height: number, x: number, y: number) => {
-    props.model.width = width;
-    props.model.height = height;
-    props.model.x = x;
-    props.model.y = y;
-  },
-  600,
-);
+const setModelBounding = (
+  width: number,
+  height: number,
+  x: number,
+  y: number,
+) => {
+  props.model.width = width;
+  props.model.height = height;
+  props.model.x = x;
+  props.model.y = y;
+};
+const setModelThrottle = useThrottleFn(setModelBounding, 500, true, true);
+const setModelDebounce = useDebounceFn(setModelBounding, 600);
 
 const isHovering = useElementHover(selfRef);
+
+const openImage = () => {
+  appStore.showImage(props.model);
+  selfRef.value?.blur();
+};
 
 watch(isHovering, () => (props.model.isHovering = isHovering.value));
 
@@ -65,14 +66,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <button class="image-holder" ref="selfRef">
+  <button ref="selfRef" class="image-holder" @click="openImage">
     <img :src="model.src" />
   </button>
 </template>
 
 <style lang="scss" scoped>
 .image-holder {
-  width: 16em;
+  width: 12rem;
 
   flex-grow: 1;
 

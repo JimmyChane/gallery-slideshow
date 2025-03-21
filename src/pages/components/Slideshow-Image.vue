@@ -1,17 +1,32 @@
 <script setup lang="ts">
+import { wait } from '@chanzor/utils';
+import { computedAsync } from '@vueuse/core';
 import { type StyleValue, computed } from 'vue';
 
-import type { ImageHolderModel } from '@/app.store';
+import { useAppStore } from '@/app.store';
+import type { ImageHolderModel } from '@/model/ImageHolder.model';
 
 const props = defineProps<{ model: ImageHolderModel }>();
 
+const appStore = useAppStore();
+
+const opacity = computedAsync(async () => {
+  if (appStore.imageModel === props.model) {
+    await wait(500);
+    return 0;
+  }
+
+  return 1;
+}, 1);
+
 const style = computed<StyleValue>(() => {
   return {
-    width: `${props.model.width}px`,
-    height: `${props.model.height}px`,
+    opacity: opacity.value,
     left: `${props.model.x}px`,
     top: `${props.model.y}px`,
-    transform: props.model.isHovering ? `scale(1.05)` : undefined,
+    width: `${props.model.width}px`,
+    height: `${props.model.height}px`,
+    transform: props.model.isHovering ? `scale(1.02)` : undefined,
   };
 });
 </script>
@@ -26,7 +41,7 @@ const style = computed<StyleValue>(() => {
 .home-image-content {
   position: absolute;
 
-  border-radius: 1em;
+  border-radius: 1rem;
   background-color: rgba(255, 255, 255, 0.2);
 
   transition: all 400ms ease-in-out;

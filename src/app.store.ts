@@ -1,5 +1,10 @@
-import { type Component } from 'vue';
+import { wait } from '@chanzor/utils';
+import { waitFrame } from '@chanzor/vue-utils';
+import { defineStore } from 'pinia';
+import { type Component, computed, ref } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
+
+import type { ImageHolderModel } from './model/ImageHolder.model';
 
 export interface AppRouteOption {
   readonly path: string;
@@ -30,37 +35,33 @@ export class AppRoute {
   }
 }
 
-const ASPECT_RATIOS: { value: number; ratio: [number, number] }[] = [
-  { value: 1, ratio: [1, 1] },
-  { value: 4 / 3, ratio: [4, 3] },
-  { value: 16 / 9, ratio: [16, 9] },
-  { value: 3 / 2, ratio: [3, 2] },
-  { value: 21 / 9, ratio: [21, 9] },
-];
+export const useAppStore = defineStore('app', () => {
+  const isShowingImage = ref(false);
+  const imageModel = ref<ImageHolderModel>();
+  let time = 0;
 
-export class ImageHolderModel {
-  src: string = '';
+  return {
+    isShowingImage: computed(() => isShowingImage.value),
+    imageModel: computed(() => imageModel.value),
+    async showImage(image: ImageHolderModel) {
+      const now = (time = Date.now());
 
-  width: number = 0;
-  height: number = 0;
-  x: number = 0;
-  y: number = 0;
+      imageModel.value = image;
 
-  isHovering: boolean = false;
+      await waitFrame();
+      if (now !== time) return;
 
-  constructor(readonly file: File) {}
+      isShowingImage.value = true;
+    },
+    async closeImage() {
+      const now = (time = Date.now());
 
-  getBestAspectRatio(): [number, number] | undefined {
-    if (this.width === 0 || this.height === 0) return;
+      isShowingImage.value = false;
+      await wait(700);
+      await waitFrame();
+      if (now !== time) return;
 
-    const actualRatio = this.width / this.height;
-    let bestMatch = ASPECT_RATIOS.reduce((previous, current) => {
-      return Math.abs(current.value - actualRatio) <
-        Math.abs(previous.value - actualRatio)
-        ? current
-        : previous;
-    });
-
-    return bestMatch.ratio;
-  }
-}
+      imageModel.value = undefined;
+    },
+  };
+});
