@@ -16,7 +16,6 @@
     "@chanzor/utils": "^0.0.3",
     "@chanzor/vue-utils": "^0.0.4",
     "@pinia/nuxt": "^0.10.1",
-    "@types/node": "^22.14.0",
     "@vueuse/core": "^10.11.1",
     "nuxt": "^3.16.2",
     "vue": "^3.5.13",
@@ -24,6 +23,7 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/node": "^22.14.0",
     "prettier": "^3.5.3",
     "sass": "^1.86.3",
     "vue-tsc": "^2.2.8"
