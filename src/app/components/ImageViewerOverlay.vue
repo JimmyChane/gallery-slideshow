@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type StyleValue, computed } from 'vue';
 
-import { useAppStore } from '@/app.store';
+import { useAppStore } from '~/src/stores/app.store';
 
 const appStore = useAppStore();
 

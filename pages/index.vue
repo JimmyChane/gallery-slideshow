@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-
-import { openImageFolder } from '@/api/OpenFile.api';
-import { ImageHolderModel } from '@/model/ImageHolder.model';
-
-import Slideshow from './components/Slideshow.vue';
+import { openImageFolder } from '~/src/api/OpenFile.api';
+import { ImageHolderModel } from '~/src/model/ImageHolder.model';
+import Slideshow from '~/src/pages/home/components/Slideshow.vue';
 
 const isOpened = ref(false);
 

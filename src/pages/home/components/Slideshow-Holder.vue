@@ -7,8 +7,8 @@ import {
 } from '@vueuse/core';
 import { onMounted, useTemplateRef, watch } from 'vue';
 
-import { useAppStore } from '@/app.store';
-import type { ImageHolderModel } from '@/model/ImageHolder.model';
+import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
+import { useAppStore } from '~/src/stores/app.store';
 
 const props = defineProps<{ model: ImageHolderModel }>();
 

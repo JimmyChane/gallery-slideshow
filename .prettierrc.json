@@ -11,8 +11,12 @@
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
+
+    "^(?!.*\\.vue$)~/(.*)$",
     "^(?!.*\\.vue$)@/(.*)$",
     "^[./](?!.*\\.vue$)",
+
+    "^~/.*\\.vue$",
     "^@/.*\\.vue$",
     "^[./].*\\.vue$"
   ],

@@ -8,6 +8,7 @@ export async function openImageFolder(): Promise<File[] | undefined> {
   if (!isDirectoryPickerSupported()) return;
 
   const folderHandle = await window
+    // @ts-expect-error
     .showDirectoryPicker()
     .catch((e: Error) => e);
   if (folderHandle instanceof Error) {

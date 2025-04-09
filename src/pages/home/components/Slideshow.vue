@@ -2,7 +2,7 @@
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
 import { ref, useTemplateRef, watch } from 'vue';
 
-import type { ImageHolderModel } from '@/model/ImageHolder.model';
+import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
 
 import SlideshowHolder from './Slideshow-Holder.vue';
 import SlideshowImage from './Slideshow-Image.vue';
