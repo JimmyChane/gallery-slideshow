@@ -5,7 +5,7 @@ import {
   useResizeObserver,
   useThrottleFn,
 } from '@vueuse/core';
-import { onMounted, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
 import { useAppStore } from '~/src/stores/app.store';
@@ -14,7 +14,7 @@ const props = defineProps<{ model: ImageHolderModel }>();
 
 const appStore = useAppStore();
 
-const selfRef = useTemplateRef<HTMLButtonElement>('selfRef');
+const selfRef = useTemplateRef('selfRef');
 
 useResizeObserver(selfRef, () => invalidateBounding());
 
@@ -44,6 +44,7 @@ const setModelThrottle = useThrottleFn(setModelBounding, 500, true, true);
 const setModelDebounce = useDebounceFn(setModelBounding, 600);
 
 const isHovering = useElementHover(selfRef);
+const src = ref<string>();
 
 const openImage = () => {
   appStore.showImage(props.model);
@@ -53,21 +54,13 @@ const openImage = () => {
 watch(isHovering, () => (props.model.isHovering = isHovering.value));
 
 onMounted(async () => {
-  const content = await new Promise<string>((r) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', (event) => {
-      r(event.target?.result as string);
-    });
-    reader.readAsDataURL(props.model.file);
-  });
-
-  props.model.src = content;
+  src.value = await props.model.getSrc();
 });
 </script>
 
 <template>
   <button ref="selfRef" class="image-holder" @click="openImage">
-    <img :src="model.src" />
+    <img :src="src" />
   </button>
 </template>
 

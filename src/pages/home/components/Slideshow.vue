@@ -10,7 +10,7 @@ import SlideshowImage from './Slideshow-Image.vue';
 const props = defineProps<{ models: ImageHolderModel[] }>();
 
 const selfRef = useTemplateRef<HTMLDivElement>('selfRef');
-const speed = ref(0.7);
+const speed = ref(0.2);
 
 const { x } = useScroll(selfRef);
 
@@ -60,14 +60,14 @@ watch(x, () => {
     <div class="images-contents">
       <SlideshowHolder
         v-for="holder of models"
-        :key="holder.file.name"
+        :key="holder.id"
         style="z-index: 0"
         :model="holder"
       />
 
       <SlideshowImage
         v-for="holder of models"
-        :key="holder.file.name"
+        :key="holder.id"
         style="z-index: 1"
         :model="holder"
       />

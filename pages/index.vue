@@ -1,33 +1,52 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { openImageFolder } from '~/src/api/OpenFile.api';
+import { useFetch } from '#app';
+import { type MaybeUndefined, optArray } from '@chanzor/utils';
+import { onMounted, ref } from 'vue';
+
+import { BACKEND_HOST } from '~/src/config';
 import { ImageHolderModel } from '~/src/model/ImageHolder.model';
+
 import Slideshow from '~/src/pages/home/components/Slideshow.vue';
 
-const isOpened = ref(false);
+const {
+  data: imageFilenames,
+  status,
+  error,
+  refresh,
+} = await useFetch<MaybeUndefined<string[]>>(
+  `${BACKEND_HOST}/api/public/filenames`,
+  { default: () => [] },
+);
 
-const holders = ref<ImageHolderModel[]>([]);
+const imageModels = ref<ImageHolderModel[]>([]);
 
-async function openFolder(): Promise<void> {
-  if (isOpened.value) return;
+onMounted(() => {
+  const filenames = optArray(imageFilenames.value);
 
-  const files = await openImageFolder();
-  if (!files) return;
+  if (!filenames.length) return [];
 
-  holders.value = files.map((file) => new ImageHolderModel(file));
-  holders.value.sort(() => [-1, 0, 1][Math.round(Math.random() * 3)]);
+  const models = filenames.map((filename) => {
+    return new ImageHolderModel(`${BACKEND_HOST}/public/${filename}?w=270`);
+  });
 
-  isOpened.value = true;
-}
+  imageModels.value = models;
+});
 </script>
 
 <template>
   <div class="home-page">
-    <button v-if="!isOpened" style="padding: 1em" @click="openFolder">
-      Open Folder
-    </button>
+    <div v-if="status === 'pending'" class="loading-indicator">
+      Loading images...
+    </div>
 
-    <Slideshow v-if="isOpened" :models="holders" />
+    <div v-else-if="error" class="error-message">
+      <p>Failed to load images: {{ error.message || 'Unknown error' }}</p>
+      <button @click="() => refresh()">Try Again</button>
+    </div>
+
+    <Slideshow v-else-if="imageModels.length > 0" :models="imageModels" />
+
+    <div v-else class="empty-state">No images found.</div>
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { wait } from '@chanzor/utils';
 import { computedAsync } from '@vueuse/core';
-import { type StyleValue, computed } from 'vue';
+import { type StyleValue, computed, onMounted, ref } from 'vue';
 
 import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
 import { useAppStore } from '~/src/stores/app.store';
@@ -9,6 +9,7 @@ import { useAppStore } from '~/src/stores/app.store';
 const props = defineProps<{ model: ImageHolderModel }>();
 
 const appStore = useAppStore();
+const src = ref<string>();
 
 const opacity = computedAsync(async () => {
   if (appStore.imageModel === props.model) {
@@ -29,11 +30,15 @@ const style = computed<StyleValue>(() => {
     transform: props.model.isHovering ? `scale(1.02)` : undefined,
   };
 });
+
+onMounted(async () => {
+  src.value = await props.model.getSrc();
+});
 </script>
 
 <template>
   <div class="home-image-content" :style="style">
-    <img v-if="model.src.length" :src="model.src" />
+    <img v-if="src?.length" :src="src" />
   </div>
 </template>
 
