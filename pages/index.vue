@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { useFetch } from '#app';
+import { useFetch, useRuntimeConfig } from '#app';
 import { type MaybeUndefined, optArray } from '@chanzor/utils';
 import { onMounted, ref } from 'vue';
 
-import { BACKEND_HOST } from '~/src/config';
 import { ImageHolderModel } from '~/src/model/ImageHolder.model';
 
 import Slideshow from '~/src/pages/home/components/Slideshow.vue';
+
+const config = useRuntimeConfig();
+
+const BACKEND_HOST = config.public.BACKEND_HOST;
+if (typeof BACKEND_HOST !== 'string') {
+  throw new Error('BACKEND_HOST is not defined');
+}
 
 const {
   data: imageFilenames,
@@ -14,7 +20,7 @@ const {
   error,
   refresh,
 } = await useFetch<MaybeUndefined<string[]>>(
-  `${BACKEND_HOST}/api/public/filenames`,
+  `${config.public.BACKEND_HOST}/api/public/filenames`,
   { default: () => [] },
 );
 
@@ -26,7 +32,9 @@ onMounted(() => {
   if (!filenames.length) return [];
 
   const models = filenames.map((filename) => {
-    return new ImageHolderModel(`${BACKEND_HOST}/public/${filename}?w=270`);
+    return new ImageHolderModel(
+      `${config.public.BACKEND_HOST}/public/${filename}?w=270`,
+    );
   });
 
   imageModels.value = models;

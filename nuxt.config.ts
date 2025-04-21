@@ -7,6 +7,8 @@ export default defineNuxtConfig({
   // ssr: false,
   // nitro: { preset: 'static' },
 
+  runtimeConfig: { public: { BACKEND_HOST: process.env.BACKEND_HOST } },
+
   components: false,
   imports: { autoImport: false },
 
