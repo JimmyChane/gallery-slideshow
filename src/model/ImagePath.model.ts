@@ -6,7 +6,10 @@ export class ImagePathModel extends ImageModel {
     super();
   }
 
-  override async getSrc(): Promise<string | undefined> {
-    return urlServerFilename(this.filenameUrl, { height: 350 }).toString();
+  override async getSrc(
+    width: number | undefined,
+    height: number | undefined,
+  ): Promise<string | undefined> {
+    return urlServerFilename(this.filenameUrl, { width, height }).toString();
   }
 }

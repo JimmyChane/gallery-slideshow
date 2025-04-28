@@ -15,8 +15,8 @@ const props = defineProps<{ model: ImageModel }>();
 const appStore = useAppStore();
 
 const selfRef = useTemplateRef('selfRef');
-
-useResizeObserver(selfRef, () => invalidateBounding());
+const isHovering = useElementHover(selfRef);
+const src = ref<string>();
 
 const invalidateBounding = () => {
   if (!selfRef.value) return;
@@ -35,26 +35,24 @@ const setModelBounding = (
   x: number,
   y: number,
 ) => {
-  props.model.width = width;
-  props.model.height = height;
-  props.model.x = x;
-  props.model.y = y;
+  props.model.holderPosition.width = width;
+  props.model.holderPosition.height = height;
+  props.model.holderPosition.x = x;
+  props.model.holderPosition.y = y;
 };
 const setModelThrottle = useThrottleFn(setModelBounding, 500, true, true);
 const setModelDebounce = useDebounceFn(setModelBounding, 600);
 
-const isHovering = useElementHover(selfRef);
-const src = ref<string>();
-
 const openImage = () => {
-  appStore.showImage(props.model);
+  appStore.open(props.model);
   selfRef.value?.blur();
 };
 
+useResizeObserver(selfRef, invalidateBounding);
 watch(isHovering, () => (props.model.isHovering = isHovering.value));
 
 onMounted(async () => {
-  src.value = await props.model.getSrc();
+  src.value = await props.model.getSrc(10, undefined);
 });
 </script>
 

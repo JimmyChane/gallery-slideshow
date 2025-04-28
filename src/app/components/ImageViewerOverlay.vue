@@ -1,35 +1,37 @@
 <script setup lang="ts">
-import { computedAsync } from '@vueuse/core';
+import { storeToRefs } from '#imports';
+import { computedAsync, debouncedRef, useWindowSize } from '@vueuse/core';
 import { type StyleValue, computed } from 'vue';
 
-import { ImageFileModel } from '~/src/model/ImageFile.model';
-import { ImagePathModel } from '~/src/model/ImagePath.model';
 import { useAppStore } from '~/src/stores/app.store';
 
 const appStore = useAppStore();
+const { isActive, isShowing, model, startX, startY, startWidth, startHeight } =
+  storeToRefs(appStore);
 
-const isShowing = computed(() => appStore.isShowingImage);
-
-const width = computed(() => appStore.imageModel?.width ?? 0);
-const height = computed(() => appStore.imageModel?.height ?? 0);
+const windowSize = useWindowSize();
+const debouncedWindowWidth = debouncedRef(windowSize.width, 1000);
+const debouncedWindowHeight = debouncedRef(windowSize.height, 1000);
 
 const src = computedAsync(() => {
-  if (appStore.imageModel instanceof ImageFileModel) {
-    return appStore.imageModel.src;
+  if (debouncedWindowWidth.value > debouncedWindowHeight.value) {
+    return model.value?.getSrc(debouncedWindowHeight.value, undefined);
+  } else if (debouncedWindowWidth.value < debouncedWindowHeight.value) {
+    return model.value?.getSrc(undefined, debouncedWindowWidth.value);
+  } else {
+    return model.value?.getSrc(
+      debouncedWindowWidth.value,
+      debouncedWindowHeight.value,
+    );
   }
-  if (appStore.imageModel instanceof ImagePathModel) {
-    return appStore.imageModel.filenameUrl;
-  }
-
-  return appStore.imageModel?.getSrc();
 });
 
 const style = computed<StyleValue>(() => {
   return {
-    '--start-x': `${appStore.imageModel?.screenX}px`,
-    '--start-y': `${appStore.imageModel?.screenY}px`,
-    '--start-width': `${width.value}px`,
-    '--start-height': `${height.value}px`,
+    '--start-x': `${startX.value}px`,
+    '--start-y': `${startY.value}px`,
+    '--start-width': `${startWidth.value}px`,
+    '--start-height': `${startHeight.value}px`,
   };
 });
 </script>
@@ -38,12 +40,13 @@ const style = computed<StyleValue>(() => {
   <div
     class="image-viewer-overlay"
     :style="style"
+    :data-active="isActive"
     :data-showing="isShowing"
-    @click.self="() => appStore.closeImage()"
+    @click.self="() => appStore.close()"
   >
     <div
       class="image-viewer-overlay-content"
-      @click.self="() => appStore.closeImage()"
+      @click.self="() => appStore.close()"
     >
       <img :src="src" />
     </div>
@@ -59,8 +62,6 @@ const style = computed<StyleValue>(() => {
 
   display: grid;
   place-items: center;
-
-  transition: all 700ms ease;
 
   background-color: rgba(0, 0, 0, 0);
   box-shadow: 0 0 5rem transparent;
@@ -79,8 +80,6 @@ const style = computed<StyleValue>(() => {
     display: grid;
     place-items: center;
 
-    transition: all 700ms ease;
-
     & > img {
       max-width: 100%;
       max-height: 100%;
@@ -92,10 +91,18 @@ const style = computed<StyleValue>(() => {
       border-radius: 1rem;
 
       user-select: none;
-      transition: all 700ms ease;
     }
   }
 
+  &[data-active='true'] {
+    transition: all 700ms ease;
+    .image-viewer-overlay-content {
+      transition: all 700ms ease;
+      & > img {
+        transition: all 700ms ease;
+      }
+    }
+  }
   &[data-showing='true'] {
     background-color: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 5rem black;

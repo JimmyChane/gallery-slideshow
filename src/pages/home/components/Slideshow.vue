@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { wait } from '@chanzor/utils';
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
-import { ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import type { ImageModel } from '~/src/model/Image.model';
 
@@ -16,17 +17,20 @@ const { x } = useScroll(selfRef);
 
 let offset = 0;
 
-const { resume: resumeSlide, pause: pauseSlide } = useRafFn(() => {
-  if (!selfRef.value) return;
+const { resume: resumeSlide, pause: pauseSlide } = useRafFn(
+  () => {
+    if (!selfRef.value) return;
 
-  offset = offset + speed.value;
+    offset = offset + speed.value;
 
-  if (offset >= selfRef.value.scrollWidth - selfRef.value.offsetWidth) {
-    offset = 0;
-  }
+    if (offset >= selfRef.value.scrollWidth - selfRef.value.offsetWidth) {
+      offset = 0;
+    }
 
-  x.value = offset;
-});
+    x.value = offset;
+  },
+  { immediate: false },
+);
 
 const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(
   x,
@@ -44,9 +48,14 @@ const pauseSlideshow = () => {
 
 watch(x, () => {
   for (const model of props.models) {
-    model.screenX = model.x - x.value;
-    model.screenY = model.y;
+    model.holderPosition.screenX = model.holderPosition.x - x.value;
+    model.holderPosition.screenY = model.holderPosition.y;
   }
+});
+
+onMounted(async () => {
+  await wait(500);
+  resumeSlideshow();
 });
 </script>
 
