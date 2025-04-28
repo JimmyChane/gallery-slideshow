@@ -3,17 +3,17 @@ import { waitFrame } from '@chanzor/vue-utils';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
+import type { ImageModel } from '~/src/model/Image.model';
 
 export const useAppStore = defineStore('app', () => {
   const isShowingImage = ref(false);
-  const imageModel = ref<ImageHolderModel>();
+  const imageModel = ref<ImageModel>();
   let time = 0;
 
   return {
     isShowingImage: computed(() => isShowingImage.value),
     imageModel: computed(() => imageModel.value),
-    async showImage(image: ImageHolderModel) {
+    async showImage(image: ImageModel) {
       const now = (time = Date.now());
 
       imageModel.value = image;

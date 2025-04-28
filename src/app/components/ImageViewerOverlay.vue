@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { computedAsync } from '@vueuse/core';
 import { type StyleValue, computed } from 'vue';
 
+import { ImageFileModel } from '~/src/model/ImageFile.model';
+import { ImagePathModel } from '~/src/model/ImagePath.model';
 import { useAppStore } from '~/src/stores/app.store';
 
 const appStore = useAppStore();
@@ -9,6 +12,17 @@ const isShowing = computed(() => appStore.isShowingImage);
 
 const width = computed(() => appStore.imageModel?.width ?? 0);
 const height = computed(() => appStore.imageModel?.height ?? 0);
+
+const src = computedAsync(() => {
+  if (appStore.imageModel instanceof ImageFileModel) {
+    return appStore.imageModel.src;
+  }
+  if (appStore.imageModel instanceof ImagePathModel) {
+    return appStore.imageModel.filenameUrl;
+  }
+
+  return appStore.imageModel?.getSrc();
+});
 
 const style = computed<StyleValue>(() => {
   return {
@@ -31,7 +45,7 @@ const style = computed<StyleValue>(() => {
       class="image-viewer-overlay-content"
       @click.self="() => appStore.closeImage()"
     >
-      <img :src="appStore.imageModel?.src" />
+      <img :src="src" />
     </div>
   </div>
 </template>

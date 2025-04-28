@@ -3,10 +3,10 @@ import { wait } from '@chanzor/utils';
 import { computedAsync } from '@vueuse/core';
 import { type StyleValue, computed, onMounted, ref } from 'vue';
 
-import type { ImageHolderModel } from '~/src/model/ImageHolder.model';
+import type { ImageModel } from '~/src/model/Image.model';
 import { useAppStore } from '~/src/stores/app.store';
 
-const props = defineProps<{ model: ImageHolderModel }>();
+const props = defineProps<{ model: ImageModel }>();
 
 const appStore = useAppStore();
 const src = ref<string>();

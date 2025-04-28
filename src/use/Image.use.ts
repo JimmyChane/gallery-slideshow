@@ -1,12 +1,13 @@
 import { ref } from 'vue';
 
 import { openImageFolder } from '../api/OpenFile.api';
-import { ImageHolderModel } from '../model/ImageHolder.model';
+import { ImageModel } from '../model/Image.model';
+import { ImageFileModel } from '../model/ImageFile.model';
 
 export function useImagePicker() {
   const isOpened = ref(false);
 
-  const models = ref<ImageHolderModel[]>([]);
+  const models = ref<ImageModel[]>([]);
 
   const openFolder = async (): Promise<void> => {
     if (isOpened.value) return;
@@ -14,7 +15,7 @@ export function useImagePicker() {
     const files = await openImageFolder();
     if (!files) return;
 
-    models.value = files.map((file) => new ImageHolderModel(file));
+    models.value = files.map((file) => new ImageFileModel(file));
     models.value.sort(() => [-1, 0, 1][Math.round(Math.random() * 3)]);
 
     isOpened.value = true;
