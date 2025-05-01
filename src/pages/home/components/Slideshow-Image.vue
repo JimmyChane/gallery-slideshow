@@ -66,7 +66,7 @@ onMounted(async () => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 700ms ease-in-out;
+    transition: all 400ms ease-in-out;
   }
 
   &[data-hovering='true'] {
