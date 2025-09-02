@@ -1,6 +1,6 @@
 {
   "name": "gallery-slideshow",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -30,6 +30,6 @@
     "vue-tsc": "^2.2.10"
   },
   "engines": {
-    "node": "22"
+    "node": ">=22.0.0"
   }
 }
