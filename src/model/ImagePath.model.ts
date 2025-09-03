@@ -1,4 +1,4 @@
-import { urlServerFilename } from '../api/ServerFilename.api';
+import { urlServerFilename } from '../composables/urlServerFilename';
 import { ImageModel } from './Image.model';
 
 export class ImagePathModel extends ImageModel {

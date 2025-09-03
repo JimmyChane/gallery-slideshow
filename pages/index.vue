@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import { useRuntimeConfig } from '#app';
 import { computed, onMounted, ref } from 'vue';
 
-import { useServerFilenames } from '~/src/api/ServerFilenames.api';
+import { useConfig } from '~/src/composables/useConfig';
+import { useServerFilenames } from '~/src/composables/useServerFilenames';
 import { ImageModel } from '~/src/model/Image.model';
 import { ImagePathModel } from '~/src/model/ImagePath.model';
 
 import Slideshow from '~/src/pages/home/components/Slideshow.vue';
 
-const config = useRuntimeConfig();
+const { host, accessToken } = useConfig();
 
-const host = computed(() => config.public.BACKEND_HOST);
-if (typeof host.value !== 'string') {
-  throw new Error('BACKEND_HOST is not defined');
-}
-
-const { filenames, error, refresh } = useServerFilenames(
-  config.public.BACKEND_HOST,
-);
+const { filenames, error, refresh } = useServerFilenames(host, accessToken);
 const errorMessage = computed(() => {
   if (error.value) return error.value.message || 'Unknown error';
 });
@@ -34,7 +27,7 @@ onMounted(() => {
 
   imageModels.value = filenames.value.map((filename) => {
     return new ImagePathModel(
-      `${config.public.BACKEND_HOST}/public/${filename}`,
+      `${host.value}/public/${filename}?t=${accessToken.value}`,
     );
   });
 

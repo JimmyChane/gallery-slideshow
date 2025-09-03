@@ -1,9 +1,9 @@
 import { useFetch } from '#app';
 import { type MaybeUndefined, optArrayString } from '@chanzor/utils';
-import { computed } from 'vue';
+import { type Ref, computed } from 'vue';
 
-export function useServerFilenames(host: string) {
-  const url = `${host}/api/public/filenames`;
+export function useServerFilenames(host: Ref<string>, token: Ref<string>) {
+  const url = `${host.value}/api/public/filenames?t=${token.value}`;
 
   const { data, status, error, refresh } = useFetch<MaybeUndefined<string[]>>(
     url,
