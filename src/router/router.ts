@@ -1,7 +1,6 @@
 import { type Router, createRouter, createWebHistory } from 'vue-router';
 
 import { RouteKey } from './Route.key';
-import './main.css';
 
 import HomePage from '@/pages/home/Home.page.vue';
 
