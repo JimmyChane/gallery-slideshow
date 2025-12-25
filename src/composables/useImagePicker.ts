@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 
-import { openImageFolder } from '../api/OpenFile.api';
+import { openImageFolder } from '@/api/openImageFolder.api';
+
 import { ImageModel } from '../model/Image.model';
 import { ImageFileModel } from '../model/ImageFile.model';
 

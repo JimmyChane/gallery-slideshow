@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import { useConfig } from '@/composables/useConfig';
 import { useServerFilenames } from '@/composables/useServerFilenames';
+import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_HOST } from '@/config/env';
 import type { ImageModel } from '@/model/Image.model';
 import { ImagePathModel } from '@/model/ImagePath.model';
 
 import Slideshow from './components/Slideshow.vue';
-
-const { host, accessToken } = useConfig();
 
 const { filenames, error, refresh } = useServerFilenames();
 const errorMessage = computed(() => {
@@ -21,8 +19,8 @@ onMounted(async () => {
   await refresh();
 
   imageModels.value = filenames.value.map((filename) => {
-    const url = new URL(`${host.value}/public/${filename} `);
-    url.searchParams.append('t', accessToken.value);
+    const url = new URL(`${ENV_BACKEND_API_HOST}/public/${filename} `);
+    url.searchParams.append('t', ENV_ACCESS_TOKEN);
 
     return new ImagePathModel(url.toString());
   });
