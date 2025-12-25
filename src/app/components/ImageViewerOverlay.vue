@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { storeToRefs } from '#imports';
 import { computedAsync, debouncedRef, useWindowSize } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
 import { type StyleValue, computed } from 'vue';
 
-import { useAppStore } from '~/src/stores/app.store';
+import { useAppStore } from '@/stores/app.store';
 
 const appStore = useAppStore();
 const { isActive, isShowing, model, startX, startY, startWidth, startHeight } =

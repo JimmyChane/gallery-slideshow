@@ -1,12 +1,9 @@
-import { useRuntimeConfig } from '#app';
 import { computed } from 'vue';
 
 export function useConfig() {
-  const config = useRuntimeConfig();
-
-  const host = computed(() => config.public.BACKEND_HOST);
+  const host = computed(() => import.meta.env.VITE_BACKEND_HOST);
   // TODO: move this public ACCESS_TOKEN to as prompt
-  const accessToken = computed(() => config.public.ACCESS_TOKEN);
+  const accessToken = computed(() => import.meta.env.VITE_ACCESS_TOKEN);
 
   if (typeof host.value !== 'string') {
     throw new Error('BACKEND_HOST is not defined');

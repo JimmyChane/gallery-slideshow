@@ -3,7 +3,7 @@ import { wait } from '@chanzor/utils';
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
-import type { ImageModel } from '~/src/model/Image.model';
+import type { ImageModel } from '@/model/Image.model';
 
 import SlideshowHolder from './Slideshow-Holder.vue';
 import SlideshowImage from './Slideshow-Image.vue';

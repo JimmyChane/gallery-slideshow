@@ -3,8 +3,8 @@ import { wait } from '@chanzor/utils';
 import { computedAsync } from '@vueuse/core';
 import { type StyleValue, computed, onMounted, ref } from 'vue';
 
-import type { ImageModel } from '~/src/model/Image.model';
-import { useAppStore } from '~/src/stores/app.store';
+import type { ImageModel } from '@/model/Image.model';
+import { useAppStore } from '@/stores/app.store';
 
 const props = defineProps<{ model: ImageModel }>();
 

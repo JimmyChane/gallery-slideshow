@@ -1,29 +1,24 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import { useConfig } from '~/src/composables/useConfig';
-import { useServerFilenames } from '~/src/composables/useServerFilenames';
-import { ImageModel } from '~/src/model/Image.model';
-import { ImagePathModel } from '~/src/model/ImagePath.model';
+import { useConfig } from '@/composables/useConfig';
+import { useServerFilenames } from '@/composables/useServerFilenames';
+import type { ImageModel } from '@/model/Image.model';
+import { ImagePathModel } from '@/model/ImagePath.model';
 
-import Slideshow from '~/src/pages/home/components/Slideshow.vue';
+import Slideshow from './components/Slideshow.vue';
 
 const { host, accessToken } = useConfig();
 
-const { filenames, error, refresh } = useServerFilenames(host, accessToken);
+const { filenames, error, refresh } = useServerFilenames();
 const errorMessage = computed(() => {
   if (error.value) return error.value.message || 'Unknown error';
 });
 
 const imageModels = ref<ImageModel[]>([]);
 
-const isMounted = ref(false);
-
-onMounted(() => {
-  if (!filenames.value.length) {
-    isMounted.value = true;
-    return;
-  }
+onMounted(async () => {
+  await refresh();
 
   imageModels.value = filenames.value.map((filename) => {
     const url = new URL(`${host.value}/public/${filename} `);
@@ -31,13 +26,11 @@ onMounted(() => {
 
     return new ImagePathModel(url.toString());
   });
-
-  isMounted.value = true;
 });
 </script>
 
 <template>
-  <div v-if="isMounted" class="home-page">
+  <div class="home-page">
     <div v-if="errorMessage?.length" class="home-page-view">
       <span>{{ errorMessage }}</span>
       <button @click="() => refresh()">Try Again</button>

@@ -3,7 +3,7 @@ import { waitFrame } from '@chanzor/vue-utils';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { ImageModel } from '~/src/model/Image.model';
+import type { ImageModel } from '../model/Image.model';
 
 export enum ImageViewerState {
   OPENING,

@@ -7,8 +7,8 @@ import {
 } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
-import type { ImageModel } from '~/src/model/Image.model';
-import { useAppStore } from '~/src/stores/app.store';
+import type { ImageModel } from '@/model/Image.model';
+import { useAppStore } from '@/stores/app.store';
 
 const props = defineProps<{ model: ImageModel }>();
 
