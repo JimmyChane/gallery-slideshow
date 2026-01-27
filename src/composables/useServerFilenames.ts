@@ -11,7 +11,7 @@ export function useServerFilenames() {
 
   async function fetchFilenames(): Promise<void> {
     const response = await API.get<MaybeUndefined<string[]>>(
-      `${ENV_BACKEND_API_HOST}/api/public/filenames?t=${ENV_ACCESS_TOKEN}`,
+      `${ENV_BACKEND_API_HOST}/api/filenames?t=${ENV_ACCESS_TOKEN}`,
     );
     filenames.value = optArrayString(response.data);
     status.value = 'success';
