@@ -1,12 +1,14 @@
 # Stage 1: Build the app
 FROM node:22-alpine AS build
+
+# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Install Dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the code and build
+# Build
 COPY . .
 RUN npm run build
 
