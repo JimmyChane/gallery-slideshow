@@ -1,6 +1,7 @@
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
 import { type ConfigEnv, defineConfig, loadEnv } from 'vite';
+import ViteInspect from 'vite-plugin-inspect';
 import z, { ZodError } from 'zod';
 
 type Env = { VITE_BACKEND_HOST: string; VITE_ACCESS_TOKEN: string };
@@ -57,7 +58,7 @@ export default defineConfig(async (mode) => {
   await validateEnv(mode);
 
   return {
-    plugins: [vue()],
+    plugins: [vue(), ViteInspect()],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
