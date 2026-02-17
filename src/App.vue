@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 
-import ImageViewerOverlay from './app/components/ImageViewerOverlay.vue';
+import ImageViewerOverlay from './app/image-viewer/ImageViewer.app.vue';
 </script>
 
 <template>
