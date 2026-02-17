@@ -37,6 +37,7 @@ const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(
   () => (offset = x.value),
 );
 
+// TODO: fix pause scrolling not working on mobile touchscreen
 const resumeSlideshow = () => {
   pauseWatchScroll();
   resumeSlide();
