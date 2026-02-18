@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { wait } from '@chanzor/utils';
+import { waitMs } from '@chanzor/utils';
 import { computedAsync } from '@vueuse/core';
 import { type StyleValue, computed, onMounted, ref } from 'vue';
 
 import type { ImageModel } from '@/model/Image.model';
-import { useAppStore } from '@/stores/app.store';
+import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
 
 const props = defineProps<{ model: ImageModel }>();
 
 const hovering = computedAsync(async () => {
   if (!props.model.isHovering) {
-    await wait(200);
+    await waitMs(200);
   }
 
   return props.model.isHovering;
 }, false);
 
-const appStore = useAppStore();
+const appStore = useImageViewerStore();
 const src = ref<string>();
 
 const opacity = computedAsync(async () => {
   if (appStore.model === props.model) {
-    await wait(500);
+    await waitMs(500);
     return 0;
   }
 

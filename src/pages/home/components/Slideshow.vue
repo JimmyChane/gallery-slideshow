@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { wait } from '@chanzor/utils';
+import { waitMs } from '@chanzor/utils';
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
@@ -55,7 +55,7 @@ watch(x, () => {
 });
 
 onMounted(async () => {
-  await wait(500);
+  await waitMs(500);
   resumeSlideshow();
 });
 </script>

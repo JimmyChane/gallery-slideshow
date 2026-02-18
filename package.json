@@ -13,9 +13,9 @@
     "down": "docker compose down"
   },
   "dependencies": {
-    "@chanzor/ts-leaf": "^1.0.0",
-    "@chanzor/utils": "^0.0.3",
-    "@chanzor/vue-utils": "^0.0.4",
+    "@chanzor/ts-leaf": "^1.1.1",
+    "@chanzor/utils": "^0.2.1",
+    "@chanzor/vue-utils": "^3.1.4",
     "@vueuse/core": "^10.11.1",
     "axios": "^1.13.2",
     "pinia": "^3.0.4",

@@ -1,8 +1,8 @@
-import { wait } from '@chanzor/utils';
-import { waitFrame } from '@chanzor/vue-utils';
+import { waitMs } from '@chanzor/utils';
+import { waitFrameMs } from '@chanzor/vue-utils';
 import { computed, ref } from 'vue';
 
-import type { ImageModel } from '../model/Image.model';
+import type { ImageModel } from '@/model/Image.model';
 
 export type ImageViewerState = 'opening' | 'opened' | 'closing' | 'closed';
 
@@ -46,12 +46,12 @@ export function useImageViewerOverlay() {
     startWidth.value = model.value.holderPosition.width;
     startHeight.value = model.value.holderPosition.height;
 
-    await waitFrame();
+    await waitFrameMs();
     if (now !== time) return;
 
     state.value = 'opening';
 
-    await waitFrame();
+    await waitFrameMs();
     if (now !== time) return;
 
     state.value = 'opened';
@@ -67,13 +67,13 @@ export function useImageViewerOverlay() {
       startHeight.value = model.value.holderPosition.height;
     }
 
-    await waitFrame();
+    await waitFrameMs();
     if (now !== time) return;
 
     state.value = 'closing';
 
-    await wait(700);
-    await waitFrame();
+    await waitMs(700);
+    await waitFrameMs();
     if (now !== time) return;
 
     state.value = 'closed';

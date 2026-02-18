@@ -6,13 +6,13 @@ import {
 } from '@vueuse/core';
 import { useTemplateRef } from 'vue';
 
-import { useAppStore } from '@/stores/app.store';
+import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
 
 import ImageViewerBackground from './components/ImageViewer-Background.vue';
 import ImageViewerContainer from './components/ImageViewer-Container.vue';
 import ImageViewerImage from './components/ImageViewer-Image.vue';
 
-const appStore = useAppStore();
+const appStore = useImageViewerStore();
 
 const imageRef = useTemplateRef('imageRef');
 onClickOutside(imageRef, () => {

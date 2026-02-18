@@ -1,4 +1,4 @@
-import { newKey } from '@chanzor/utils';
+import { newUniqueTimestamp } from '@chanzor/utils';
 
 import { ASPECT_RATIOS } from './ImageAspectRatio.model';
 
@@ -13,7 +13,7 @@ export class Position {
 }
 
 export abstract class ImageModel {
-  readonly id = newKey();
+  readonly id = newUniqueTimestamp();
 
   readonly holderPosition = new Position();
 

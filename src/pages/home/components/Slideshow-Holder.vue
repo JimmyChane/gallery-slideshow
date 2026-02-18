@@ -8,11 +8,11 @@ import {
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import type { ImageModel } from '@/model/Image.model';
-import { useAppStore } from '@/stores/app.store';
+import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
 
 const props = defineProps<{ model: ImageModel }>();
 
-const appStore = useAppStore();
+const appStore = useImageViewerStore();
 
 const selfRef = useTemplateRef('selfRef');
 const isHovering = useElementHover(selfRef);
