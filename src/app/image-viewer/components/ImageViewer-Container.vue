@@ -59,13 +59,13 @@ defineProps<{
     .image-viewer-overlay-content {
       top: var(--top);
       left: var(--left);
-      width: var(--width);
-      height: var(--height);
 
       position: absolute;
       opacity: 0;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
   }
 

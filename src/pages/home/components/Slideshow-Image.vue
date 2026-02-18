@@ -20,6 +20,8 @@ const appStore = useImageViewerStore();
 const src = ref<string>();
 
 const opacity = computedAsync(async () => {
+  if (!props.model.isPositionReady) return 0;
+
   if (appStore.model === props.model) {
     await waitMs(500);
     return 0;

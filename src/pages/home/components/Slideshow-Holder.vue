@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { waitFrameMs } from '@chanzor/vue-utils';
 import {
   useDebounceFn,
   useElementHover,
@@ -18,6 +19,8 @@ const selfRef = useTemplateRef('selfRef');
 const isHovering = useElementHover(selfRef);
 const src = ref<string>();
 
+let timeSetModelBounding = 0;
+
 const invalidateBounding = () => {
   if (!selfRef.value) return;
 
@@ -29,7 +32,7 @@ const invalidateBounding = () => {
   setModelThrottle(width, height, x, y);
   setModelDebounce(width, height, x, y);
 };
-const setModelBounding = (
+const setModelBounding = async (
   width: number,
   height: number,
   x: number,
@@ -39,6 +42,11 @@ const setModelBounding = (
   props.model.holderPosition.height = height;
   props.model.holderPosition.x = x;
   props.model.holderPosition.y = y;
+
+  const now = (timeSetModelBounding = Date.now());
+  await waitFrameMs(500);
+  if (now !== timeSetModelBounding) return;
+  props.model.isPositionReady = true;
 };
 const setModelThrottle = useThrottleFn(setModelBounding, 500, true, true);
 const setModelDebounce = useDebounceFn(setModelBounding, 600);

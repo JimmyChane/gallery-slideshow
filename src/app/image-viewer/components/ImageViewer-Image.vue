@@ -38,7 +38,6 @@ const onLoad = (): void => {
 
 <template>
   <div class="image-viewer-overlay-img" :data-loading="isLoading">
-    <div class="image-placeholder"></div>
     <img :src @load="onLoad" />
   </div>
 </template>
@@ -52,17 +51,9 @@ const onLoad = (): void => {
 
   display: flex;
 
-  .image-placeholder {
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    background-color: #000;
-    border-radius: 1rem;
-    transition: all 700ms ease;
-  }
-
   & > img {
+    max-width: 100%;
+    max-height: 100%;
     display: flex;
 
     user-select: none;
@@ -74,17 +65,11 @@ const onLoad = (): void => {
   }
 
   &[data-loading='true'] {
-    .image-placeholder {
-      opacity: 1;
-    }
     img {
       opacity: 0;
     }
   }
   &[data-loading='false'] {
-    .image-placeholder {
-      opacity: 0;
-    }
     img {
       opacity: 1;
     }

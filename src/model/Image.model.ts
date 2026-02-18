@@ -16,6 +16,7 @@ export abstract class ImageModel {
   readonly id = newUniqueTimestamp();
 
   readonly holderPosition = new Position();
+  isPositionReady: boolean = false;
 
   isHovering: boolean = false;
 

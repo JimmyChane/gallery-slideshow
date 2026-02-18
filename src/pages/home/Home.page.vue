@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { waitMs } from '@chanzor/utils';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { useServerFilenames } from '@/composables/useServerFilenames';
-import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_HOST } from '@/config/env';
 import type { ImageModel } from '@/model/Image.model';
 import { ImagePathModel } from '@/model/ImagePath.model';
 
@@ -15,15 +15,29 @@ const errorMessage = computed(() => {
 
 const imageModels = ref<ImageModel[]>([]);
 
+const push = (filename: string): void => {
+  imageModels.value.push(new ImagePathModel(filename));
+};
+
+let loadTime = 0;
+
 onMounted(async () => {
+  const now = (loadTime = Date.now());
+
   await refresh();
+  if (now !== loadTime) return;
 
-  imageModels.value = filenames.value.map((filename) => {
-    const url = new URL(`${ENV_BACKEND_API_HOST}/public/${filename} `);
-    url.searchParams.append('t', ENV_ACCESS_TOKEN);
+  const shuffledFilenames = filenames.value.sort(() => Math.random() - 0.5);
+  for (const filename of shuffledFilenames) {
+    push(filename);
+    await waitMs(200);
+    if (now !== loadTime) return;
+  }
+});
 
-    return new ImagePathModel(url.toString());
-  });
+onUnmounted(() => {
+  imageModels.value = [];
+  loadTime = Date.now();
 });
 </script>
 
