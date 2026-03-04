@@ -14,7 +14,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "VITE_BACKEND_HOST=${{ secrets.VITE_BACKEND_HOST }}" > .env
+          echo "VITE_BACKEND_HOST=${{ variables.VITE_BACKEND_HOST }}" > .env
           echo "VITE_ACCESS_TOKEN=${{ secrets.VITE_ACCESS_TOKEN }}" > .env
 
       - name: Start Docker Containers
