@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Ensure Docker is ready
+        run: |
+          docker version
+
       # 2. Run the command to start the containers
       - name: Start Docker Containers
         run: |
