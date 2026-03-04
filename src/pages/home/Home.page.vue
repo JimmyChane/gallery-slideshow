@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { waitMs } from '@chanzor/utils';
+import { waitFrameMs } from '@chanzor/vue-utils';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { useServerFilenames } from '@/composables/useServerFilenames';
 import type { ImageModel } from '@/model/Image.model';
 import { ImagePathModel } from '@/model/ImagePath.model';
 
-import Slideshow from './components/Slideshow.vue';
+import SlideshowView from './components/Slideshow.view.vue';
 
 const { filenames, error, refresh } = useServerFilenames();
 const errorMessage = computed(() => {
@@ -33,7 +33,7 @@ onMounted(async () => {
   const shuffledFilenames = filenames.value.sort(() => Math.random() - 0.5);
   for (const filename of shuffledFilenames) {
     push(filename);
-    await waitMs(200);
+    await waitFrameMs(100);
     if (now !== loadTime) return;
   }
 });
@@ -51,7 +51,7 @@ onUnmounted(() => {
       <button @click="() => refresh()">Try Again</button>
     </div>
     <div v-else-if="imageModels.length > 0" class="home-page-view">
-      <Slideshow :models="imageModels" />
+      <SlideshowView :models="imageModels" />
     </div>
     <div v-else-if="isLoading" class="home-page-view">Loading...</div>
     <div v-else-if="!isLoading" class="home-page-view">No images found</div>
