@@ -62,5 +62,6 @@ export default defineConfig(async (mode) => {
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
+    server: { port: 3001 },
   };
 });
