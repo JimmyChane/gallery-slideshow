@@ -45,7 +45,7 @@ async function validateAccessToken(
   return value;
 }
 async function validateEnv(mode: ConfigEnv): Promise<Env> {
-  const env = loadEnv(mode.mode, process.cwd(), 'VITE_');
+  const env = loadEnv(mode.mode, __dirname, 'VITE_');
 
   const VITE_BACKEND_HOST = await validateBackendHost(env);
   const VITE_ACCESS_TOKEN = await validateAccessToken(env);
