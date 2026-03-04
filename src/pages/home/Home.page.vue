@@ -20,12 +20,15 @@ const push = (filename: string): void => {
 };
 
 let loadTime = 0;
+const isLoading = ref(false);
 
 onMounted(async () => {
   const now = (loadTime = Date.now());
 
+  isLoading.value = true;
   await refresh();
   if (now !== loadTime) return;
+  isLoading.value = false;
 
   const shuffledFilenames = filenames.value.sort(() => Math.random() - 0.5);
   for (const filename of shuffledFilenames) {
@@ -47,10 +50,11 @@ onUnmounted(() => {
       <span>{{ errorMessage }}</span>
       <button @click="() => refresh()">Try Again</button>
     </div>
-
-    <Slideshow v-else-if="imageModels.length > 0" :models="imageModels" />
-
-    <div v-else class="home-page-view">No images found</div>
+    <div v-else-if="imageModels.length > 0" class="home-page-view">
+      <Slideshow :models="imageModels" />
+    </div>
+    <div v-else-if="isLoading" class="home-page-view">Loading...</div>
+    <div v-else-if="!isLoading" class="home-page-view">No images found</div>
   </div>
 </template>
 
