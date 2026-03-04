@@ -1,0 +1,20 @@
+name: Local Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    # Use the label you gave your runner during setup (usually 'self-hosted')
+    runs-on: self-hosted
+
+    steps:
+      # 1. Pull the latest code from GitHub onto your local machine
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Run the command to start the containers
+      - name: Start Docker Containers
+        run: |
+          npm run up
