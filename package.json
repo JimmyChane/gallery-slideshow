@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "format": "prettier --write src/",
-    "up": "docker compose up -d --build",
-    "down": "docker compose down"
+    "up": "docker compose -f docker-compose.prod.yml up -d --build --remove-orphans",
+    "down": "docker compose -f docker-compose.prod.yml down",
+    "stop": "docker compose -f docker-compose.prod.yml stop"
   },
   "engines": {
     "node": ">=20.0.0"
