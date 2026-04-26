@@ -1,8 +1,6 @@
-import { type MaybeUndefined, optArrayString } from '@chanzor/utils';
 import { ref } from 'vue';
 
-import { API } from '@/api/api';
-import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_HOST } from '@/config/env';
+import { getApiImgList } from '@/api/img.api';
 
 export function useServerFilenames() {
   const filenames = ref<string[]>([]);
@@ -10,10 +8,10 @@ export function useServerFilenames() {
   const error = ref<Error>();
 
   async function fetchFilenames(): Promise<void> {
-    const response = await API.get<MaybeUndefined<string[]>>(
-      `${ENV_BACKEND_API_HOST}/api/filenames?t=${ENV_ACCESS_TOKEN}`,
-    );
-    filenames.value = optArrayString(response.data);
+    const list = await getApiImgList();
+    filenames.value = list
+      .map((item) => item.filename)
+      .filter((filename) => typeof filename === 'string');
     status.value = 'success';
   }
 

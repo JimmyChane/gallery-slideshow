@@ -6,23 +6,23 @@ import { type StyleValue, computed, onMounted, ref } from 'vue';
 import type { ImageModel } from '@/model/Image.model';
 import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
 
-const props = defineProps<{ model: ImageModel }>();
+const { model } = defineProps<{ model: ImageModel }>();
 
 const hovering = computedAsync(async () => {
-  if (!props.model.isHovering) {
+  if (!model.isHovering) {
     await waitMs(200);
   }
 
-  return props.model.isHovering;
+  return model.isHovering;
 }, false);
 
 const appStore = useImageViewerStore();
 const src = ref<string>();
 
 const opacity = computedAsync(async () => {
-  if (!props.model.isPositionReady) return 0;
+  if (!model.isPositionReady) return 0;
 
-  if (appStore.model === props.model) {
+  if (appStore.model === model) {
     await waitMs(500);
     return 0;
   }
@@ -33,15 +33,15 @@ const opacity = computedAsync(async () => {
 const style = computed<StyleValue>(() => {
   return {
     opacity: opacity.value,
-    left: `${props.model.holderPosition.x}px`,
-    top: `${props.model.holderPosition.y}px`,
-    width: `${props.model.holderPosition.width}px`,
-    height: `${props.model.holderPosition.height}px`,
+    left: `${model.holderPosition.x}px`,
+    top: `${model.holderPosition.y}px`,
+    width: `${model.holderPosition.width}px`,
+    height: `${model.holderPosition.height}px`,
   };
 });
 
 onMounted(async () => {
-  src.value = await props.model.getSrc(350, undefined);
+  src.value = await model.getSrc(350, undefined);
 });
 </script>
 
