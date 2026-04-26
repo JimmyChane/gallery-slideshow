@@ -1,117 +1,55 @@
 <script setup lang="ts">
-import { waitMs } from '@chanzor/utils';
-import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useTemplateRef } from 'vue';
 
 import type { ImageModel } from '@/model/Image.model';
 
-import SlideshowHolder from './Slideshow-Holder.vue';
-import SlideshowImage from './Slideshow-Image.vue';
+import PauseIcon from '@/components/Pause.icon.vue';
+import PlayIcon from '@/components/Play.icon.vue';
+
+import SlideshowButton from './Slideshow-Button.vue';
+import SlideshowScroll from './Slideshow-Scroll.vue';
 
 const props = defineProps<{ models: ImageModel[] }>();
 
-const selfRef = useTemplateRef<HTMLDivElement>('selfRef');
-const speed = ref(0.2);
+const slideshowRef = useTemplateRef('slideshowRef');
 
-const { x } = useScroll(selfRef);
-
-let offset = 0;
-
-const { resume: resumeSlide, pause: pauseSlide } = useRafFn(
-  () => {
-    if (!selfRef.value) return;
-
-    offset = offset + speed.value;
-
-    if (offset >= selfRef.value.scrollWidth - selfRef.value.offsetWidth) {
-      offset = 0;
-    }
-
-    x.value = offset;
-  },
-  { immediate: false },
-);
-
-const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(
-  x,
-  () => (offset = x.value),
-);
-
-// TODO: fix pause scrolling not working on mobile touchscreen
-const resumeSlideshow = () => {
-  pauseWatchScroll();
-  resumeSlide();
-};
-const pauseSlideshow = () => {
-  pauseSlide();
-  resumeWatchScroll();
-};
-
-watch(x, () => {
-  for (const model of props.models) {
-    model.holderPosition.screenX = model.holderPosition.x - x.value;
-    model.holderPosition.screenY = model.holderPosition.y;
-  }
-});
-
-onMounted(async () => {
-  await waitMs(500);
-  resumeSlideshow();
-});
+// TODO: add speedup button
 </script>
 
 <template>
-  <div
-    ref="selfRef"
-    class="images"
-    @mouseleave="() => resumeSlideshow()"
-    @mouseenter="() => pauseSlideshow()"
-  >
-    <div class="images-contents">
-      <SlideshowHolder
-        v-for="holder of models"
-        :key="holder.id"
-        style="z-index: 0"
-        :model="holder"
-      />
+  <div class="slideshow">
+    <SlideshowScroll ref="slideshowRef" :models />
 
-      <SlideshowImage
-        v-for="holder of models"
-        :key="holder.id"
-        style="z-index: 1"
-        :model="holder"
-      />
+    <div class="slideshow-buttons">
+      <SlideshowButton @click="() => slideshowRef?.toggle()">
+        <PauseIcon v-if="slideshowRef?.isActive" />
+        <PlayIcon v-else />
+      </SlideshowButton>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.images {
+.slideshow {
+  position: relative;
   width: 100%;
   height: 100%;
 
-  overflow-y: hidden;
-  overflow-x: auto;
+  display: flex;
+  overflow: hidden;
 
-  scrollbar-width: 0px;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  .slideshow-buttons {
+    --padding: 1rem;
 
-  .images-contents {
-    position: relative;
+    z-index: 2;
 
-    width: max-content;
-    height: 100%;
-
-    gap: 1em;
-    padding: 1em;
+    position: absolute;
+    bottom: var(--padding);
+    right: var(--padding);
 
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
   }
 }
 </style>
