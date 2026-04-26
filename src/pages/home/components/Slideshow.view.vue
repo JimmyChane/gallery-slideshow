@@ -3,6 +3,7 @@ import { useTemplateRef } from 'vue';
 
 import type { ImageModel } from '@/model/Image.model';
 
+import { useHoldAction } from './useHoldAction';
 import { useSlideshowSpeed } from './useSlideshowSpeed';
 
 import FastForwardIcon from '@/components/Fast-Forward.icon.vue';
@@ -18,6 +19,13 @@ const props = defineProps<{ models: ImageModel[] }>();
 const slideshowRef = useTemplateRef('slideshowRef');
 
 const { speed, increaseSpeed, decreaseSpeed } = useSlideshowSpeed();
+
+const { start: startIncreaseSpeed, stop: stopIncreaseSpeed } = useHoldAction(
+  () => increaseSpeed(),
+);
+const { start: startDecreaseSpeed, stop: stopDecreaseSpeed } = useHoldAction(
+  () => decreaseSpeed(),
+);
 </script>
 
 <template>
@@ -25,7 +33,13 @@ const { speed, increaseSpeed, decreaseSpeed } = useSlideshowSpeed();
     <SlideshowScroll ref="slideshowRef" :models :speed />
 
     <div class="slideshow-buttons">
-      <SlideshowButton @click="() => decreaseSpeed()">
+      <span>Speed: {{ speed }}</span>
+
+      <SlideshowButton
+        @mousedown="startDecreaseSpeed"
+        @mouseup="stopDecreaseSpeed"
+        @mouseleave="stopDecreaseSpeed"
+      >
         <RewindIcon />
       </SlideshowButton>
 
@@ -37,7 +51,11 @@ const { speed, increaseSpeed, decreaseSpeed } = useSlideshowSpeed();
         <PlayIcon v-else />
       </SlideshowButton>
 
-      <SlideshowButton @click="() => increaseSpeed()">
+      <SlideshowButton
+        @mousedown="startIncreaseSpeed"
+        @mouseup="stopIncreaseSpeed"
+        @mouseleave="stopIncreaseSpeed"
+      >
         <FastForwardIcon />
       </SlideshowButton>
     </div>
