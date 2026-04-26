@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { waitMs } from '@chanzor/utils';
 import { useRafFn, useScroll, watchPausable } from '@vueuse/core';
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { onMounted, useTemplateRef, watch } from 'vue';
 
 import type { ImageModel } from '@/model/Image.model';
 
 import SlideshowHolder from './Slideshow-Holder.vue';
 import SlideshowImage from './Slideshow-Image.vue';
 
-const props = defineProps<{ models: ImageModel[] }>();
+const { models, speed } = defineProps<{
+  models: ImageModel[];
+  speed: number;
+}>();
 
 const selfRef = useTemplateRef<HTMLDivElement>('selfRef');
-const speed = ref(0.2);
 
 const { x } = useScroll(selfRef);
 
@@ -25,7 +27,7 @@ const {
   () => {
     if (!selfRef.value) return;
 
-    offset = offset + speed.value;
+    offset = offset + speed;
 
     if (offset >= selfRef.value.scrollWidth - selfRef.value.offsetWidth) {
       offset = 0;
@@ -56,7 +58,7 @@ function toggle() {
 }
 
 watch(x, () => {
-  for (const model of props.models) {
+  for (const model of models) {
     model.holderPosition.screenX = model.holderPosition.x - x.value;
     model.holderPosition.screenY = model.holderPosition.y;
   }
