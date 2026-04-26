@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { shape = 'square' } = defineProps<{ shape?: 'circle' | 'square' }>();
+</script>
 
 <template>
-  <button type="button" class="slideshow-button">
+  <button type="button" class="slideshow-button" :data-shape="shape">
     <slot></slot>
   </button>
 </template>
@@ -27,14 +29,21 @@ $transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
   cursor: pointer;
   background-color: gray;
-  border-radius: 0.5rem;
   color: white;
 
   transition: all $transition-speed $transition-curve;
   outline: none;
   user-select: none;
-
   box-shadow: 0 0 1rem black;
+  border: none;
+
+  &[data-shape='square'] {
+    border-radius: 0.5rem;
+  }
+
+  &[data-shape='circle'] {
+    border-radius: 50%;
+  }
 
   &:hover:not(:disabled) {
     background-color: rgb(84, 84, 84);

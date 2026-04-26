@@ -21,7 +21,10 @@ const slideshowRef = useTemplateRef('slideshowRef');
     <SlideshowScroll ref="slideshowRef" :models />
 
     <div class="slideshow-buttons">
-      <SlideshowButton @click="() => slideshowRef?.toggle()">
+      <SlideshowButton
+        :shape="slideshowRef?.isActive ? 'square' : 'circle'"
+        @click="() => slideshowRef?.toggle()"
+      >
         <PauseIcon v-if="slideshowRef?.isActive" />
         <PlayIcon v-else />
       </SlideshowButton>
