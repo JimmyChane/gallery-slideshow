@@ -14,6 +14,12 @@ export async function getApiImgList(): Promise<ImagePathData[]> {
   return optArray(result.data);
 }
 
+export function getApiImgPath(filename: string): string {
+  const url = new URL(`${ENV_BACKEND_API_HOST}/api/img/one/${filename}`);
+  url.searchParams.append('t', ENV_ACCESS_TOKEN);
+  return url.toString();
+}
+
 export async function getApiImgPalette(
   filename: string,
 ): Promise<ColorPaletteData> {
