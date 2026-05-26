@@ -1,6 +1,6 @@
 import { newUniqueTimestamp } from '@chanzor/utils';
 
-import { ASPECT_RATIOS } from './ImageAspectRatio.model';
+import { IMAGE_ASPECT_RATIO_LIST } from './image-aspect-ratio.model';
 
 export class Position {
   width: number = -1;
@@ -30,7 +30,7 @@ export abstract class ImageModel {
       return;
 
     const actualRatio = this.holderPosition.width / this.holderPosition.height;
-    let bestMatch = ASPECT_RATIOS.reduce((previous, current) => {
+    let bestMatch = IMAGE_ASPECT_RATIO_LIST.reduce((previous, current) => {
       return Math.abs(current.value - actualRatio) <
         Math.abs(previous.value - actualRatio)
         ? current

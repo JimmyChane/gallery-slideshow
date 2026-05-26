@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import { getApiImgList } from '@/api/img.api';
+import { getApiImgList } from '@/module/image/img.api';
 
 export function useServerFilenames() {
   const filenames = ref<string[]>([]);

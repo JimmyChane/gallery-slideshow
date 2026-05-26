@@ -1,9 +1,9 @@
 import { type MaybeUndefined, optArray } from '@chanzor/utils';
 
+import { API } from '@/api/api';
 import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_BASE } from '@/config/env';
-import type { ColorPaletteData, ImagePathData } from '@/model/ImagePath.model';
 
-import { API } from './api';
+import type { ColorPaletteData, ImagePathData } from './image-path.model';
 
 export async function getApiImgList(): Promise<ImagePathData[]> {
   const result =

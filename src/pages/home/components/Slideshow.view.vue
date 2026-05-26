@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
 
-import type { ImageModel } from '@/model/Image.model';
+import type { ImageModel } from '@/module/image/image.model.ts';
 
 import { useHoldAction } from './useHoldAction';
 import { useSlideshowSpeed } from './useSlideshowSpeed';

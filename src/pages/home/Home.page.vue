@@ -3,8 +3,8 @@ import { waitFrameMs } from '@chanzor/vue-utils';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { useServerFilenames } from '@/composables/useServerFilenames';
-import type { ImageModel } from '@/model/Image.model';
-import { ImagePathModel } from '@/model/ImagePath.model';
+import { ImagePathModel } from '@/module/image/image-path.model.ts';
+import type { ImageModel } from '@/module/image/image.model.ts';
 
 import SlideshowView from './components/Slideshow.view.vue';
 

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { useAuthStore } from '@/stores/auth/auth.store';
+import { useAuthStore } from '@/module/auth/auth.store';
 
 import { HOME_ROUTE } from '../home/home.route';
 

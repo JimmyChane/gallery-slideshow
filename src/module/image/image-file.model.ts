@@ -1,6 +1,5 @@
-import { useFileReaderStore } from '@/stores/file-reader/file-reader.store';
-
-import { ImageModel } from './Image.model';
+import { useFileReaderStore } from '../file-reader/file-reader.store';
+import { ImageModel } from './image.model';
 
 export class ImageFileModel extends ImageModel {
   src: string = '';

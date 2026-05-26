@@ -1,7 +1,7 @@
-import { getApiImgPalette, getApiImgPath } from '@/api/img.api';
+import { urlServerFilename } from '@/composables/urlServerFilename';
 
-import { urlServerFilename } from '../composables/urlServerFilename';
-import { ImageModel } from './Image.model';
+import { ImageModel } from './image.model';
+import { getApiImgPalette, getApiImgPath } from './img.api';
 
 export type ColorPaletteData = {
   vibrant?: string;

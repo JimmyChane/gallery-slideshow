@@ -6,7 +6,7 @@ import {
 } from '@vueuse/core';
 import { useTemplateRef } from 'vue';
 
-import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
+import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store.ts';
 
 import ImageViewerBackground from './components/ImageViewer-Background.vue';
 import ImageViewerContainer from './components/ImageViewer-Container.vue';

@@ -2,7 +2,7 @@ import { waitMs } from '@chanzor/utils';
 import { waitFrameMs } from '@chanzor/vue-utils';
 import { computed, ref } from 'vue';
 
-import type { ImageModel } from '@/model/Image.model';
+import type { ImageModel } from '@/module/image/image.model';
 
 export type ImageViewerState = 'opening' | 'opened' | 'closing' | 'closed';
 

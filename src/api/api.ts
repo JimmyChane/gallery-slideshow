@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { ENV_BACKEND_API_BASE } from '@/config/env';
-import { useAuthStore } from '@/stores/auth/auth.store';
+import { useAuthStore } from '@/module/auth/auth.store';
 
 export const API = axios.create({
   baseURL: ENV_BACKEND_API_BASE,

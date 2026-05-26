@@ -1,9 +1,8 @@
 import { ref } from 'vue';
 
 import { openImageFolder } from '@/api/openImageFolder.api';
-
-import { ImageModel } from '../model/Image.model';
-import { ImageFileModel } from '../model/ImageFile.model';
+import { ImageFileModel } from '@/module/image/image-file.model';
+import type { ImageModel } from '@/module/image/image.model';
 
 export function useImagePicker() {
   const isOpened = ref(false);

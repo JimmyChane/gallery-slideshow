@@ -2,7 +2,7 @@
 import { computedAsync, debouncedRef, useWindowSize } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
-import type { ImageModel } from '@/model/Image.model';
+import type { ImageModel } from '@/module/image/image.model';
 
 const { model } = defineProps<{
   model?: ImageModel;

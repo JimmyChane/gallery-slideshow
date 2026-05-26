@@ -8,8 +8,8 @@ import {
 } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
-import type { ImageModel } from '@/model/Image.model';
-import { useImageViewerStore } from '@/stores/image-viewer/image-viewer.store';
+import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
+import type { ImageModel } from '@/module/image/image.model';
 
 const props = defineProps<{ model: ImageModel }>();
 
