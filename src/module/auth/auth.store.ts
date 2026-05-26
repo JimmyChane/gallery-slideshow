@@ -1,16 +1,16 @@
+import { optString } from '@chanzor/utils';
 import { useLocalStorage } from '@vueuse/core';
-import axios from 'axios';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { ENV_BACKEND_API_BASE } from '@/config/env';
 import { LOGIN_ROUTE } from '@/pages/login/login.route';
+
+import { authExchange, authLogin, authRefresh } from './auth.api';
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
 
-  // State managed by VueUse (Syncs with LocalStorage automatically)
   const accessTokenLocal = useLocalStorage<string | undefined>(
     'accessToken',
     undefined,
@@ -25,30 +25,22 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
+  function getAccessToken(): string | undefined {
+    return accessTokenLocal.value;
+  }
+
   async function login(username: string, password: string): Promise<boolean> {
     isLoading.value = true;
     error.value = null;
 
     try {
-      // Step 1: Login to get loginToken
-      const loginRes = await axios.post(`${ENV_BACKEND_API_BASE}/auth/login`, {
-        username,
-        password,
-      });
+      const loginRes = await authLogin(username, password);
+      const loginToken = optString(loginRes.data.loginToken);
 
-      const { loginToken } = loginRes.data;
+      const exchangeRes = await authExchange(loginToken);
 
-      // Step 2: Exchange loginToken for final tokens
-      const exchangeRes = await axios.post(
-        `${ENV_BACKEND_API_BASE}/auth/exchange`,
-        { loginToken },
-      );
-
-      const { accessToken: access, refreshToken: refresh } = exchangeRes.data;
-
-      // Save to LocalStorage via VueUse refs
-      accessTokenLocal.value = access;
-      refreshTokenLocal.value = refresh;
+      accessTokenLocal.value = optString(exchangeRes.data.accessToken);
+      refreshTokenLocal.value = optString(exchangeRes.data.refreshToken);
 
       return true;
     } catch (err: any) {
@@ -67,22 +59,21 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function refresh(): Promise<void> {
-    const response = await axios.post(`${ENV_BACKEND_API_BASE}/auth/refresh`, {
-      refreshToken: refreshTokenLocal.value,
-    });
+    if (!refreshTokenLocal.value?.length) {
+      logout();
+      return;
+    }
 
-    const { accessToken: access, refreshToken: refresh } = response.data;
-
-    // Step 2: Update the store (which updates LocalStorage via VueUse)
-    accessTokenLocal.value = access;
-    refreshTokenLocal.value = refresh;
+    const response = await authRefresh(refreshTokenLocal.value);
+    accessTokenLocal.value = optString(response.data.accessToken);
+    refreshTokenLocal.value = optString(response.data.refreshToken);
   }
 
   return {
-    accessToken: accessTokenLocal,
-    refreshToken: refreshTokenLocal,
+    accessToken: computed(() => accessTokenLocal.value),
     isLoading,
     error,
+    getAccessToken,
     login,
     logout,
     refresh,

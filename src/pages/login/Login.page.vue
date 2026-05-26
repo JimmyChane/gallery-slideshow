@@ -6,11 +6,9 @@ import { useAuthStore } from '@/module/auth/auth.store';
 
 import { HOME_ROUTE } from '../home/home.route';
 
-// Adjust path as needed
-
 const router = useRouter();
 
-const { login, isLoading, error, accessToken } = useAuthStore();
+const { accessToken, isLoading, error, login } = useAuthStore();
 
 const username = ref('');
 const password = ref('');
@@ -25,8 +23,7 @@ async function handleSubmit(): Promise<void> {
 
 <template>
   <div class="login-wrapper">
-    <!-- Show info if already logged in -->
-    <div v-if="accessToken" class="status-box">
+    <div v-if="accessToken?.length" class="status-box">
       <span>
         Logged in as:
         <strong>{{ username || 'Admin' }}</strong>

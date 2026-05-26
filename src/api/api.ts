@@ -3,17 +3,17 @@ import axios from 'axios';
 import { ENV_BACKEND_API_BASE } from '@/config/env';
 import { useAuthStore } from '@/module/auth/auth.store';
 
-export const API = axios.create({
+export const APP_API = axios.create({
   baseURL: ENV_BACKEND_API_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
 
-API.interceptors.request.use(
+APP_API.interceptors.request.use(
   (config) => {
-    const authStore = useAuthStore();
+    const accessToken = useAuthStore().getAccessToken();
 
-    if (authStore.accessToken?.length) {
-      config.headers.Authorization = `Bearer ${authStore.accessToken}`;
+    if (accessToken?.length) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -23,7 +23,7 @@ API.interceptors.request.use(
   },
 );
 
-API.interceptors.response.use(
+APP_API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const authStore = useAuthStore();
@@ -34,18 +34,9 @@ API.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(
-          `${ENV_BACKEND_API_BASE}/auth/refresh`,
-          { refreshToken: authStore.refreshToken },
-        );
-
-        const { accessToken, refreshToken } = response.data;
-
-        authStore.accessToken = accessToken;
-        authStore.refreshToken = refreshToken;
-
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        return API(originalRequest);
+        await authStore.refresh();
+        originalRequest.headers.Authorization = `Bearer ${authStore.getAccessToken()}`;
+        return APP_API(originalRequest);
       } catch (refreshError) {
         authStore.logout();
         return Promise.reject(refreshError);

@@ -1,13 +1,13 @@
 import { type MaybeUndefined, optArray } from '@chanzor/utils';
 
-import { API } from '@/api/api';
+import { APP_API } from '@/api/api';
 import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_BASE } from '@/config/env';
 
 import type { ColorPaletteData, ImagePathData } from './image-path.model';
 
 export async function getApiImgList(): Promise<ImagePathData[]> {
   const result =
-    await API.get<MaybeUndefined<ImagePathData[]>>('/api/img/list');
+    await APP_API.get<MaybeUndefined<ImagePathData[]>>('/api/img/list');
   return optArray(result.data);
 }
 
@@ -21,7 +21,7 @@ export function getApiImgPath(filename: string): string {
 export async function getApiImgPalette(
   filename: string,
 ): Promise<ColorPaletteData> {
-  const result = await API.get<ColorPaletteData>(
+  const result = await APP_API.get<ColorPaletteData>(
     `/api/img/one/${filename}/palette`,
   );
   return result.data;
