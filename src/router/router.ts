@@ -9,7 +9,7 @@ export async function buildRouter(): Promise<Router> {
     routes: [
       LOGIN_ROUTE,
       HOME_ROUTE,
-      { path: '/:pathMatch(.*)*', redirect: { name: HOME_ROUTE.name } },
+      { path: '/:pathMatch(.*)*', redirect: HOME_ROUTE.path },
     ],
   });
 

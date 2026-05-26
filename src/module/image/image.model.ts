@@ -1,21 +1,12 @@
 import { newUniqueTimestamp } from '@chanzor/utils';
 
 import { IMAGE_ASPECT_RATIO_LIST } from './image-aspect-ratio.model';
-
-export class Position {
-  width: number = -1;
-  height: number = -1;
-  x: number = -1;
-  y: number = -1;
-
-  screenX: number = -1;
-  screenY: number = -1;
-}
+import { ImagePositionModel } from './image-position.model';
 
 export abstract class ImageModel {
   readonly id = newUniqueTimestamp();
 
-  readonly holderPosition = new Position();
+  readonly holderPosition = new ImagePositionModel();
   isPositionReady: boolean = false;
 
   isHovering: boolean = false;
