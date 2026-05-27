@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 
+import { useAuthStore } from './module/auth/auth.store.ts';
+
 import ImageViewerApp from './module/image-viewer/ImageViewer.app.vue';
+
+useAuthStore();
 </script>
 
 <template>
