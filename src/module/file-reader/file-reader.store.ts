@@ -1,4 +1,4 @@
-import { LinearQueueHandler } from '@chanzor/ts-leaf';
+import { LinearQueueHandler } from '@chanzor/utils';
 import { defineStore } from 'pinia';
 
 export const useFileReaderStore = defineStore('file-reader', () => {
