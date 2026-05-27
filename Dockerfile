@@ -4,9 +4,9 @@ FROM node:20-alpine AS build
 # Set working directory
 WORKDIR /app
 
-# Install Dependencies
 COPY package*.json ./
-RUN npm install
+# CHANGE: Use npm ci (faster) and a cache mount (saves packages between builds)
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 # Build
 COPY . .
