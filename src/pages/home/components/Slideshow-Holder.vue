@@ -3,7 +3,9 @@ import { waitFrameMs } from '@chanzor/vue-utils';
 import {
   useDebounceFn,
   useElementHover,
+  useElementVisibility,
   useResizeObserver,
+  useThrottle,
   useThrottleFn,
 } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
@@ -16,12 +18,17 @@ const props = defineProps<{ model: ImageModel }>();
 const appStore = useImageViewerStore();
 
 const selfRef = useTemplateRef('selfRef');
+
+const isVisible = useElementVisibility(selfRef);
+const isVisibleDelay = useThrottle(isVisible, 500, true, true);
+
 const isHovering = useElementHover(selfRef);
+
 const src = ref<string>();
 
 let timeSetModelBounding = 0;
 
-const invalidateBounding = () => {
+function invalidateBounding() {
   if (!selfRef.value) return;
 
   const width = selfRef.value.offsetWidth;
@@ -31,7 +38,7 @@ const invalidateBounding = () => {
 
   setModelThrottle(width, height, x, y);
   setModelDebounce(width, height, x, y);
-};
+}
 const setModelBounding = async (
   width: number,
   height: number,
@@ -51,16 +58,26 @@ const setModelBounding = async (
 const setModelThrottle = useThrottleFn(setModelBounding, 500, true, true);
 const setModelDebounce = useDebounceFn(setModelBounding, 600);
 
-const openImage = () => {
+function openImage() {
   appStore.open(props.model);
   selfRef.value?.blur();
-};
+}
+
+const isTriggeredLoad = ref(false);
+
+async function onTriggerLoad() {
+  if (isTriggeredLoad.value) return;
+  if (!isVisible.value) return;
+  isTriggeredLoad.value = true;
+  src.value = await props.model.getSrc(10, undefined);
+}
 
 useResizeObserver(selfRef, invalidateBounding);
+watch(isVisibleDelay, () => onTriggerLoad());
 watch(isHovering, () => (props.model.isHovering = isHovering.value));
 
 onMounted(async () => {
-  src.value = await props.model.getSrc(10, undefined);
+  onTriggerLoad();
 });
 </script>
 

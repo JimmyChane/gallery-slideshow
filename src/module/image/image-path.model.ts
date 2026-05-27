@@ -1,18 +1,19 @@
 import { urlServerFilename } from '@/composables/urlServerFilename';
 
-import type { ColorPaletteData } from './image-color-palette.data';
+import { ColorPaletteModel } from './image-color-palette.model';
 import { ImageModel } from './image.model';
-import { getApiImgPalette, getApiImgPath } from './img.api';
+import { getApiImgPath } from './img.api';
 
 export type ImagePathData = { filename?: string };
 
 export class ImagePathModel extends ImageModel {
-  fullPath: string;
+  readonly fullPath: string;
+  readonly colorPalette: ColorPaletteModel;
 
   constructor(readonly filename: string) {
     super();
-
     this.fullPath = getApiImgPath(filename);
+    this.colorPalette = new ColorPaletteModel(filename);
   }
 
   override async getSrc(
@@ -20,9 +21,5 @@ export class ImagePathModel extends ImageModel {
     height: number | undefined,
   ): Promise<string | undefined> {
     return urlServerFilename(this.fullPath, { width, height }).toString();
-  }
-
-  async getColorPalette(): Promise<ColorPaletteData> {
-    return getApiImgPalette(this.filename);
   }
 }

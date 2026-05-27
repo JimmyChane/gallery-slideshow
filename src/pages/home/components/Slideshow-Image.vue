@@ -1,20 +1,37 @@
 <script setup lang="ts">
 import { waitMs } from '@chanzor/utils';
-import { computedAsync } from '@vueuse/core';
-import { type StyleValue, computed, onMounted, ref } from 'vue';
+import { computedAsync, useElementVisibility, useThrottle } from '@vueuse/core';
+import {
+  type StyleValue,
+  computed,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
-import type { ImageModel } from '@/module/image/image.model';
+import { ImageBlobModel } from '@/module/image/image-blob.model';
+import { ImagePathModel } from '@/module/image/image-path.model';
+import { ImageModel } from '@/module/image/image.model';
 
 const { model } = defineProps<{ model: ImageModel }>();
 
-const hovering = computedAsync(async () => {
+const appStore = useImageViewerStore();
+
+const selfRef = useTemplateRef('selfRef');
+const isVisible = useElementVisibility(selfRef);
+const isVisibleDelay = useThrottle(isVisible, 500, true, true);
+
+const isTriggeredLoad = ref(false);
+const isHovering = computedAsync(async () => {
   if (!model.isHovering) await waitMs(200);
   return model.isHovering;
 }, false);
 
-const appStore = useImageViewerStore();
 const src = ref<string>();
+const colorPalette =
+  ref<import('@/module/image/image-color-palette.data').ColorPaletteData>();
 
 const opacity = computedAsync(async () => {
   if (!model.isPositionReady) return 0;
@@ -32,16 +49,38 @@ const style = computed<StyleValue>(() => {
     top: `${model.holderPosition.y}px`,
     width: `${model.holderPosition.width}px`,
     height: `${model.holderPosition.height}px`,
+    '--color-muted': `${colorPalette.value?.muted ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-muted-dark': `${colorPalette.value?.mutedDark ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-muted-light': `${colorPalette.value?.mutedLight ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-vibrant': `${colorPalette.value?.vibrant ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-vibrant-dark': `${colorPalette.value?.vibrantDark ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-vibrant-light': `${colorPalette.value?.vibrantLight ?? 'rgba(255, 255, 255, 0.2)'}`,
   };
 });
 
-onMounted(async () => {
+async function onTriggerLoad() {
+  if (isTriggeredLoad.value) return;
+  if (!isVisible.value) return;
+  isTriggeredLoad.value = true;
   src.value = await model.getSrc(350, undefined);
-});
+
+  if (model instanceof ImagePathModel || model instanceof ImageBlobModel) {
+    colorPalette.value = await model.colorPalette.getColorPalette();
+  }
+}
+
+watch(isVisibleDelay, () => onTriggerLoad());
+
+onMounted(() => onTriggerLoad());
 </script>
 
 <template>
-  <div class="home-image-content" :style="style" :data-hovering="hovering">
+  <div
+    ref="selfRef"
+    class="home-image-content"
+    :style="style"
+    :data-hovering="isHovering"
+  >
     <img v-if="src?.length" :src="src" />
   </div>
 </template>
@@ -51,7 +90,7 @@ onMounted(async () => {
   position: absolute;
 
   border-radius: 1rem;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--color-muted);
 
   transition: all 200ms ease-in-out;
   overflow: hidden;

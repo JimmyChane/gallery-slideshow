@@ -1,18 +1,20 @@
 import { APP_API } from '@/api/api';
 import { urlServerFilename } from '@/composables/urlServerFilename';
 
-import type { ColorPaletteData } from './image-color-palette.data';
+import { ColorPaletteModel } from './image-color-palette.model';
 import { ImageModel } from './image.model';
-import { getApiImgPalette, getApiImgPath } from './img.api';
+import { getApiImgPath } from './img.api';
 
 export type ImageBlobData = { filename?: string };
 
 export class ImageBlobModel extends ImageModel {
-  fullPath: string;
+  readonly fullPath: string;
+  readonly colorPalette: ColorPaletteModel;
 
   constructor(readonly filename: string) {
     super();
     this.fullPath = getApiImgPath(filename);
+    this.colorPalette = new ColorPaletteModel(filename);
   }
 
   override async getSrc(
@@ -22,9 +24,5 @@ export class ImageBlobModel extends ImageModel {
     const url = urlServerFilename(this.fullPath, { width, height }).toString();
     const response = await APP_API.get(url, { responseType: 'blob' });
     return URL.createObjectURL(response.data);
-  }
-
-  async getColorPalette(): Promise<ColorPaletteData> {
-    return getApiImgPalette(this.filename);
   }
 }
