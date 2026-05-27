@@ -60,8 +60,6 @@ export const useAuthRefreshStore = defineStore('auth-refresh', () => {
   }
 
   onMounted(async () => {
-    await waitMs(5000);
-
     if (refreshTokenLocal.value?.length) await refresh();
     isInitializing.value = false;
   });
