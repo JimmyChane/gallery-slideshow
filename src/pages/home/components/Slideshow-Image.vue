@@ -9,10 +9,7 @@ import type { ImageModel } from '@/module/image/image.model';
 const { model } = defineProps<{ model: ImageModel }>();
 
 const hovering = computedAsync(async () => {
-  if (!model.isHovering) {
-    await waitMs(200);
-  }
-
+  if (!model.isHovering) await waitMs(200);
   return model.isHovering;
 }, false);
 
@@ -21,12 +18,10 @@ const src = ref<string>();
 
 const opacity = computedAsync(async () => {
   if (!model.isPositionReady) return 0;
-
   if (appStore.model === model) {
     await waitMs(500);
     return 0;
   }
-
   return 1;
 }, 0);
 

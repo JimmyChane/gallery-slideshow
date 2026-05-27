@@ -3,7 +3,7 @@ import { waitFrameMs } from '@chanzor/vue-utils';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { useServerFilenames } from '@/composables/useServerFilenames';
-import { ImagePathModel } from '@/module/image/image-path.model.ts';
+import { ImageBlobModel } from '@/module/image/image-blob.model.ts';
 import type { ImageModel } from '@/module/image/image.model.ts';
 
 import SlideshowView from './components/Slideshow.view.vue';
@@ -16,7 +16,7 @@ const errorMessage = computed(() => {
 const imageModels = ref<ImageModel[]>([]);
 
 const push = (filename: string): void => {
-  imageModels.value.push(new ImagePathModel(filename));
+  imageModels.value.push(new ImageBlobModel(filename));
 };
 
 let loadTime = 0;
