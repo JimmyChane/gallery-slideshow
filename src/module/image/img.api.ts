@@ -7,8 +7,7 @@ import type { ColorPaletteData } from './image-color-palette.data';
 import type { ImagePathData } from './image-path.model';
 
 export async function getApiImgList(): Promise<ImagePathData[]> {
-  const result =
-    await APP_API.get<MaybeUndefined<ImagePathData[]>>('/api/img/list');
+  const result = await APP_API.get<MaybeUndefined<ImagePathData[]>>('/api/img/list');
   return optArray(result.data);
 }
 
@@ -19,11 +18,7 @@ export function getApiImgPath(filename: string): string {
   return url.toString();
 }
 
-export async function getApiImgPalette(
-  filename: string,
-): Promise<ColorPaletteData> {
-  const result = await APP_API.get<ColorPaletteData>(
-    `/api/img/one/${filename}/palette`,
-  );
+export async function getApiImgPalette(filename: string): Promise<ColorPaletteData> {
+  const result = await APP_API.get<ColorPaletteData>(`/api/img/one/${filename}/palette`);
   return result.data;
 }

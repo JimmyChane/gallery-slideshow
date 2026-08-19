@@ -16,10 +16,7 @@ export class ImagePathModel extends ImageModel {
     this.colorPalette = new ColorPaletteModel(filename);
   }
 
-  override async getSrc(
-    width: number | undefined,
-    height: number | undefined,
-  ): Promise<string | undefined> {
+  override async getSrc(width: number | undefined, height: number | undefined): Promise<string | undefined> {
     return urlServerFilename(this.fullPath, { width, height }).toString();
   }
 }

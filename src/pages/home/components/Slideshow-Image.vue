@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { waitMs } from '@chanzor/utils';
 import { computedAsync, useElementVisibility, useThrottle } from '@vueuse/core';
-import {
-  type StyleValue,
-  computed,
-  onMounted,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue';
+import { type StyleValue, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
 import { ImageBlobModel } from '@/module/image/image-blob.model';
@@ -30,8 +23,7 @@ const isHovering = computedAsync(async () => {
 }, false);
 
 const src = ref<string>();
-const colorPalette =
-  ref<import('@/module/image/image-color-palette.data').ColorPaletteData>();
+const colorPalette = ref<import('@/module/image/image-color-palette.data').ColorPaletteData>();
 
 const opacity = computedAsync(async () => {
   if (!model.isPositionReady) return 0;
@@ -75,12 +67,7 @@ onMounted(() => onTriggerLoad());
 </script>
 
 <template>
-  <div
-    ref="selfRef"
-    class="home-image-content"
-    :style="style"
-    :data-hovering="isHovering"
-  >
+  <div ref="selfRef" class="home-image-content" :style="style" :data-hovering="isHovering">
     <img v-if="src?.length" :src="src" />
   </div>
 </template>

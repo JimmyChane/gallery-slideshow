@@ -13,17 +13,13 @@ import { useAuthRefreshStore } from './auth-refresh.store';
 import { UserModel } from './user.model';
 
 export function fetchLogin(username: string, password: string) {
-  return axios.post<{ loginToken?: string }>(
-    `${ENV_BACKEND_API_BASE}/auth/login`,
-    { username, password },
-  );
+  return axios.post<{ loginToken?: string }>(`${ENV_BACKEND_API_BASE}/auth/login`, { username, password });
 }
 
 export function fetchExchange(loginToken: string) {
-  return axios.post<{ accessToken?: string; refreshToken?: string }>(
-    `${ENV_BACKEND_API_BASE}/auth/exchange`,
-    { loginToken },
-  );
+  return axios.post<{ accessToken?: string; refreshToken?: string }>(`${ENV_BACKEND_API_BASE}/auth/exchange`, {
+    loginToken,
+  });
 }
 
 export function fetchGetSelf() {
@@ -59,9 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
       isLogging.value = true;
       error.value = undefined;
 
-      const loginRes = await fetchLogin(username, password).catch(
-        (e: Error) => e,
-      );
+      const loginRes = await fetchLogin(username, password).catch((e: Error) => e);
       if (loginRes instanceof Error) {
         error.value = 'Authentication failed';
         isLogging.value = false;
@@ -69,18 +63,14 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       const loginToken = optString(loginRes.data.loginToken);
-      const exchangeRes = await fetchExchange(loginToken).catch(
-        (e: Error) => e,
-      );
+      const exchangeRes = await fetchExchange(loginToken).catch((e: Error) => e);
       if (exchangeRes instanceof Error) {
         error.value = 'Authentication failed';
         isLogging.value = false;
         return false;
       }
 
-      await authRefreshStore.setRefreshToken(
-        optString(exchangeRes.data.refreshToken),
-      );
+      await authRefreshStore.setRefreshToken(optString(exchangeRes.data.refreshToken));
 
       return true;
     });
@@ -130,10 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
       throw selfRes;
     }
 
-    user.value = new UserModel(
-      optString(selfRes.data.userId),
-      optString(selfRes.data.username),
-    );
+    user.value = new UserModel(optString(selfRes.data.userId), optString(selfRes.data.username));
   }
 
   onMounted(async () => {

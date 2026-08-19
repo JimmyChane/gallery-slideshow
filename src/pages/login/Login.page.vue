@@ -34,12 +34,7 @@ onMounted(async () => {
 
       <div class="input-group">
         <label>Username</label>
-        <input
-          v-model="username"
-          type="text"
-          placeholder="Enter username"
-          :disabled="isDisabled"
-        />
+        <input v-model="username" type="text" placeholder="Enter username" :disabled="isDisabled" />
       </div>
 
       <div class="input-group">

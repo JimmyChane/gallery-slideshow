@@ -3,10 +3,7 @@ import axios from 'axios';
 import { ENV_BACKEND_API_BASE } from '@/config/env';
 import { useAuthRefreshStore } from '@/module/auth/auth-refresh.store';
 
-export const APP_API = axios.create({
-  baseURL: ENV_BACKEND_API_BASE,
-  headers: { 'Content-Type': 'application/json' },
-});
+export const APP_API = axios.create({ baseURL: ENV_BACKEND_API_BASE, headers: { 'Content-Type': 'application/json' } });
 
 APP_API.interceptors.request.use(
   async (config) => {

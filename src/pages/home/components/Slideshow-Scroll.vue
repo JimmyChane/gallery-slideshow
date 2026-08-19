@@ -8,10 +8,7 @@ import type { ImageModel } from '@/module/image/image.model.ts';
 import SlideshowHolder from './Slideshow-Holder.vue';
 import SlideshowImage from './Slideshow-Image.vue';
 
-const { models, speed } = defineProps<{
-  models: ImageModel[];
-  speed: number;
-}>();
+const { models, speed } = defineProps<{ models: ImageModel[]; speed: number }>();
 
 const selfRef = useTemplateRef<HTMLDivElement>('selfRef');
 
@@ -38,10 +35,7 @@ const {
   { immediate: false },
 );
 
-const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(
-  x,
-  () => (offset = x.value),
-);
+const { resume: resumeWatchScroll, pause: pauseWatchScroll } = watchPausable(x, () => (offset = x.value));
 
 function resume() {
   pauseWatchScroll();
@@ -75,19 +69,9 @@ defineExpose({ resume, pause, toggle, isActive });
 <template>
   <div ref="selfRef" class="slideshow-scroll">
     <div class="slideshow-scroll-contents">
-      <SlideshowHolder
-        v-for="holder of models"
-        :key="holder.id"
-        style="z-index: 0"
-        :model="holder"
-      />
+      <SlideshowHolder v-for="holder of models" :key="holder.id" style="z-index: 0" :model="holder" />
 
-      <SlideshowImage
-        v-for="holder of models"
-        :key="holder.id"
-        style="z-index: 1"
-        :model="holder"
-      />
+      <SlideshowImage v-for="holder of models" :key="holder.id" style="z-index: 1" :model="holder" />
     </div>
   </div>
 </template>

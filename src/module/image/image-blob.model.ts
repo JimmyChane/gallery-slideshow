@@ -17,10 +17,7 @@ export class ImageBlobModel extends ImageModel {
     this.colorPalette = new ColorPaletteModel(filename);
   }
 
-  override async getSrc(
-    width: number | undefined,
-    height: number | undefined,
-  ): Promise<string | undefined> {
+  override async getSrc(width: number | undefined, height: number | undefined): Promise<string | undefined> {
     const url = urlServerFilename(this.fullPath, { width, height }).toString();
     const response = await APP_API.get(url, { responseType: 'blob' });
     return URL.createObjectURL(response.data);

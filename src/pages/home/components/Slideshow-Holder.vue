@@ -39,12 +39,7 @@ function invalidateBounding() {
   setModelThrottle(width, height, x, y);
   setModelDebounce(width, height, x, y);
 }
-const setModelBounding = async (
-  width: number,
-  height: number,
-  x: number,
-  y: number,
-) => {
+const setModelBounding = async (width: number, height: number, x: number, y: number) => {
   props.model.holderPosition.width = width;
   props.model.holderPosition.height = height;
   props.model.holderPosition.x = x;

@@ -4,11 +4,7 @@ import { ref, watch } from 'vue';
 
 import type { ImageModel } from '@/module/image/image.model';
 
-const { model } = defineProps<{
-  model?: ImageModel;
-  showing: boolean;
-  active: boolean;
-}>();
+const { model } = defineProps<{ model?: ImageModel; showing: boolean; active: boolean }>();
 
 const windowSize = useWindowSize();
 const debouncedWindowWidth = debouncedRef(windowSize.width, 1_000);
@@ -20,10 +16,7 @@ const src = computedAsync<string | undefined>(async () => {
   } else if (debouncedWindowWidth.value < debouncedWindowHeight.value) {
     return model?.getSrc(undefined, debouncedWindowWidth.value);
   } else {
-    return model?.getSrc(
-      debouncedWindowWidth.value,
-      debouncedWindowHeight.value,
-    );
+    return model?.getSrc(debouncedWindowWidth.value, debouncedWindowHeight.value);
   }
 });
 

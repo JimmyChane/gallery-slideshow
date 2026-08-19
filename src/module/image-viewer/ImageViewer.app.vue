@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  onClickOutside,
-  useElementBounding,
-  useElementSize,
-} from '@vueuse/core';
+import { onClickOutside, useElementBounding, useElementSize } from '@vueuse/core';
 import { useTemplateRef } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store.ts';

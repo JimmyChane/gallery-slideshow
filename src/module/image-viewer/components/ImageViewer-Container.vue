@@ -1,23 +1,11 @@
 <script setup lang="ts">
-defineProps<{
-  width: number;
-  height: number;
-  top: number;
-  left: number;
-  showing: boolean;
-  active: boolean;
-}>();
+defineProps<{ width: number; height: number; top: number; left: number; showing: boolean; active: boolean }>();
 </script>
 
 <template>
   <div
     class="image-viewer-overlay"
-    :style="{
-      '--left': `${left}px`,
-      '--top': `${top}px`,
-      '--width': `${width}px`,
-      '--height': `${height}px`,
-    }"
+    :style="{ '--left': `${left}px`, '--top': `${top}px`, '--width': `${width}px`, '--height': `${height}px` }"
     :data-active="active"
     :data-showing="showing"
   >

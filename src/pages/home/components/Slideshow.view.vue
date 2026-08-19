@@ -20,12 +20,8 @@ const slideshowRef = useTemplateRef('slideshowRef');
 
 const { speed, increaseSpeed, decreaseSpeed } = useSlideshowSpeed();
 
-const { start: startIncreaseSpeed, stop: stopIncreaseSpeed } = useHoldAction(
-  () => increaseSpeed(),
-);
-const { start: startDecreaseSpeed, stop: stopDecreaseSpeed } = useHoldAction(
-  () => decreaseSpeed(),
-);
+const { start: startIncreaseSpeed, stop: stopIncreaseSpeed } = useHoldAction(() => increaseSpeed());
+const { start: startDecreaseSpeed, stop: stopDecreaseSpeed } = useHoldAction(() => decreaseSpeed());
 </script>
 
 <template>
@@ -35,27 +31,16 @@ const { start: startDecreaseSpeed, stop: stopDecreaseSpeed } = useHoldAction(
     <div class="slideshow-buttons">
       <span>Speed: {{ speed }}</span>
 
-      <SlideshowButton
-        @mousedown="startDecreaseSpeed"
-        @mouseup="stopDecreaseSpeed"
-        @mouseleave="stopDecreaseSpeed"
-      >
+      <SlideshowButton @mousedown="startDecreaseSpeed" @mouseup="stopDecreaseSpeed" @mouseleave="stopDecreaseSpeed">
         <RewindIcon />
       </SlideshowButton>
 
-      <SlideshowButton
-        :shape="slideshowRef?.isActive ? 'square' : 'circle'"
-        @click="() => slideshowRef?.toggle()"
-      >
+      <SlideshowButton :shape="slideshowRef?.isActive ? 'square' : 'circle'" @click="() => slideshowRef?.toggle()">
         <PauseIcon v-if="slideshowRef?.isActive" />
         <PlayIcon v-else />
       </SlideshowButton>
 
-      <SlideshowButton
-        @mousedown="startIncreaseSpeed"
-        @mouseup="stopIncreaseSpeed"
-        @mouseleave="stopIncreaseSpeed"
-      >
+      <SlideshowButton @mousedown="startIncreaseSpeed" @mouseup="stopIncreaseSpeed" @mouseleave="stopIncreaseSpeed">
         <FastForwardIcon />
       </SlideshowButton>
     </div>

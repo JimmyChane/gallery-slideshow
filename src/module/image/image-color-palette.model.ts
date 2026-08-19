@@ -9,9 +9,7 @@ export class ColorPaletteModel {
   async getColorPalette(): Promise<Readonly<ColorPaletteData> | undefined> {
     if (this.data) return this.data;
 
-    const dataFetched = await getApiImgPalette(this.filename).catch(
-      (e: Error) => e,
-    );
+    const dataFetched = await getApiImgPalette(this.filename).catch((e: Error) => e);
     if (dataFetched instanceof Error) {
       console.error(dataFetched);
       this.data = undefined;
