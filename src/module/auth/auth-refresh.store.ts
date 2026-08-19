@@ -1,10 +1,17 @@
 import { LinearQueueHandler, optString, waitMs } from '@chanzor/utils';
 import { useLocalStorage } from '@vueuse/core';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { defineStore } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 
-import { authRefresh } from './auth.api';
+import { ENV_BACKEND_API_BASE } from '@/config/env';
+
+export function fetchRefresh(refreshToken: string) {
+  return axios.post<{ accessToken?: string; refreshToken?: string }>(
+    `${ENV_BACKEND_API_BASE}/auth/refresh`,
+    { refreshToken },
+  );
+}
 
 export const useAuthRefreshStore = defineStore('auth-refresh', () => {
   const queue = new LinearQueueHandler();
@@ -35,7 +42,7 @@ export const useAuthRefreshStore = defineStore('auth-refresh', () => {
       return;
     }
 
-    const response = await authRefresh(refreshTokenLocal.value).catch(
+    const response = await fetchRefresh(refreshTokenLocal.value).catch(
       (e: Error) => e,
     );
     if (response instanceof AxiosError) {

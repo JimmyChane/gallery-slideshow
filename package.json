@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "format": "prettier --write src/",
+    "analyze": "knip",
+    "analyze:fix": "knip --fix --allow-remove-files --include files",
     "up": "docker compose -f docker-compose.prod.yml up -d --build --remove-orphans",
     "down": "docker compose -f docker-compose.prod.yml down",
     "stop": "docker compose -f docker-compose.prod.yml stop"
