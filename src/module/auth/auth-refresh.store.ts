@@ -6,7 +6,7 @@ import { computed, onMounted, ref } from 'vue';
 
 import { ENV_BACKEND_API_BASE } from '@/config/env';
 
-export function fetchRefresh(refreshToken: string) {
+function fetchRefresh(refreshToken: string) {
   return axios.post<{ accessToken?: string; refreshToken?: string }>(`${ENV_BACKEND_API_BASE}/auth/refresh`, {
     refreshToken,
   });
@@ -35,20 +35,15 @@ export const useAuthRefreshStore = defineStore('auth-refresh', () => {
       return;
     }
 
-    const response = await fetchRefresh(refreshTokenLocal.value).catch((e: Error) => e);
-    if (response instanceof AxiosError) {
-      if (response.status === 401) {
-        clear();
-        return;
-      }
-    }
-    if (response instanceof Error) {
+    const res = await fetchRefresh(refreshTokenLocal.value).catch((e: Error) => e);
+    if (res instanceof AxiosError) {
+      if (res.status === 401) clear();
+    } else if (res instanceof Error) {
       clear();
-      return;
+    } else {
+      accessTokenLocal.value = optString(res.data.accessToken);
+      refreshTokenLocal.value = optString(res.data.refreshToken);
     }
-
-    accessTokenLocal.value = optString(response.data.accessToken);
-    refreshTokenLocal.value = optString(response.data.refreshToken);
   }
 
   async function setRefreshToken(refreshToken: string): Promise<void> {

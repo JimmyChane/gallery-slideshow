@@ -4,26 +4,25 @@ import { defineStore } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { APP_API } from '@/api/api';
+import { API_SERVER } from '@/api/api';
 import { ENV_BACKEND_API_BASE } from '@/config/env';
-import { HOME_ROUTE } from '@/pages/home/home.route';
-import { LOGIN_ROUTE } from '@/pages/login/login.route';
+import { ROUTE_HOME, ROUTE_LOGIN } from '@/router/router';
 
 import { useAuthRefreshStore } from './auth-refresh.store';
 import { UserModel } from './user.model';
 
-export function fetchLogin(username: string, password: string) {
+function fetchLogin(username: string, password: string) {
   return axios.post<{ loginToken?: string }>(`${ENV_BACKEND_API_BASE}/auth/login`, { username, password });
 }
 
-export function fetchExchange(loginToken: string) {
+function fetchExchange(loginToken: string) {
   return axios.post<{ accessToken?: string; refreshToken?: string }>(`${ENV_BACKEND_API_BASE}/auth/exchange`, {
     loginToken,
   });
 }
 
-export function fetchGetSelf() {
-  return APP_API.get<{ userId?: string; username?: string }>('/auth/self');
+function fetchGetSelf() {
+  return API_SERVER.get<{ userId?: string; username?: string }>('/auth/self');
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -85,7 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
       isLogging.value = false;
       error.value = undefined;
 
-      router.push(HOME_ROUTE.path);
+      router.push(ROUTE_HOME.path);
     });
   }
 
@@ -93,7 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
     await queue.next(async () => {
       authRefreshStore.clear();
       user.value = undefined;
-      router.push(LOGIN_ROUTE.path);
+      router.push(ROUTE_LOGIN.path);
     });
   }
 
@@ -102,7 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (!authRefreshStore.isActive) {
         authRefreshStore.clear();
         user.value = undefined;
-        router.push(LOGIN_ROUTE.path);
+        router.push(ROUTE_LOGIN.path);
         return;
       }
 
@@ -128,7 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     if (authRefreshStore.isActive) {
       await refreshSelf();
-      router.push(HOME_ROUTE.path);
+      router.push(ROUTE_HOME.path);
     } else {
       await logout();
     }

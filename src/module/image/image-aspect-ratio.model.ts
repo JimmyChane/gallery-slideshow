@@ -1,7 +1,4 @@
-export interface AspectRatioModel {
-  readonly value: number;
-  readonly ratio: [number, number];
-}
+export type AspectRatioModel = { readonly value: number; readonly ratio: [number, number] };
 
 export const IMAGE_ASPECT_RATIO_LIST: AspectRatioModel[] = [
   { value: 1, ratio: [1, 1] },

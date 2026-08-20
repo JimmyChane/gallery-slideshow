@@ -3,9 +3,12 @@ import axios from 'axios';
 import { ENV_BACKEND_API_BASE } from '@/config/env';
 import { useAuthRefreshStore } from '@/module/auth/auth-refresh.store';
 
-export const APP_API = axios.create({ baseURL: ENV_BACKEND_API_BASE, headers: { 'Content-Type': 'application/json' } });
+export const API_SERVER = axios.create({
+  baseURL: ENV_BACKEND_API_BASE,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-APP_API.interceptors.request.use(
+API_SERVER.interceptors.request.use(
   async (config) => {
     const authRefreshStore = useAuthRefreshStore();
     const accessToken = await authRefreshStore.getAccessToken();
@@ -21,7 +24,7 @@ APP_API.interceptors.request.use(
   },
 );
 
-APP_API.interceptors.response.use(
+API_SERVER.interceptors.response.use(
   (response) => response,
   async (error) => {
     const authRefreshStore = useAuthRefreshStore();
@@ -36,7 +39,7 @@ APP_API.interceptors.response.use(
         const accessToken = await authRefreshStore.getAccessToken();
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        return APP_API(originalRequest);
+        return API_SERVER(originalRequest);
       } catch (refreshError) {
         authRefreshStore.clear();
         return Promise.reject(refreshError);

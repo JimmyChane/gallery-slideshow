@@ -1,5 +1,18 @@
-import type { ColorPaletteData } from './image-color-palette.data';
-import { getApiImgPalette } from './img.api';
+import { API_SERVER } from '@/api/api';
+
+async function getApiImgPalette(filename: string): Promise<ColorPaletteData> {
+  const result = await API_SERVER.get<ColorPaletteData>(`/api/img/one/${filename}/palette`);
+  return result.data;
+}
+
+export type ColorPaletteData = {
+  vibrant?: string;
+  vibrantDark?: string;
+  vibrantLight?: string;
+  muted?: string;
+  mutedDark?: string;
+  mutedLight?: string;
+};
 
 export class ColorPaletteModel {
   private data?: Readonly<ColorPaletteData>;

@@ -3,8 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useAuthStore } from '@/module/auth/auth.store';
-
-import { HOME_ROUTE } from '../home/home.route';
+import { ROUTE_HOME } from '@/router/router';
 
 const router = useRouter();
 
@@ -23,7 +22,7 @@ async function handleSubmit(): Promise<void> {
 
 onMounted(async () => {
   const user = await authStore.getUser();
-  if (user) router.push(HOME_ROUTE.path);
+  if (user) router.push(ROUTE_HOME.path);
 });
 </script>
 

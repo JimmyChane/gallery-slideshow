@@ -4,9 +4,8 @@ import { computedAsync, useElementVisibility, useThrottle } from '@vueuse/core';
 import { type StyleValue, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
-import { ImageBlobModel } from '@/module/image/image-blob.model';
-import { ImagePathModel } from '@/module/image/image-path.model';
-import { ImageModel } from '@/module/image/image.model';
+import type { ColorPaletteData } from '@/module/image/image-color-palette.model';
+import { ImageBlobModel, ImageModel, ImagePathModel } from '@/module/image/image.model';
 
 const { model } = defineProps<{ model: ImageModel }>();
 
@@ -23,7 +22,7 @@ const isHovering = computedAsync(async () => {
 }, false);
 
 const src = ref<string>();
-const colorPalette = ref<import('@/module/image/image-color-palette.data').ColorPaletteData>();
+const colorPalette = ref<ColorPaletteData>();
 
 const opacity = computedAsync(async () => {
   if (!model.isPositionReady) return 0;
