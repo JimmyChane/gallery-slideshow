@@ -5,13 +5,12 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/module/auth/auth.store';
 import { ROUTE_HOME } from '@/router/router';
 
+import PageV2 from '@/components/page-v2/Page-v2.vue';
+import PageBodyV2 from '@/components/page-v2/PageBody-v2.vue';
+
 const router = useRouter();
-
 const authStore = useAuthStore();
-
-const isDisabled = computed(() => {
-  return authStore.isInitializing || authStore.isLogging;
-});
+const isDisabled = computed(() => authStore.isInitializing || authStore.isLogging);
 
 const username = ref('');
 const password = ref('');
@@ -27,39 +26,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <div class="form-container">
-      <h3>Hello login</h3>
+  <PageV2>
+    <PageBodyV2>
+      <div class="login-wrapper">
+        <h3 class="login-title">Login</h3>
 
-      <div class="input-group">
-        <label>Username</label>
-        <input v-model="username" type="text" placeholder="Enter username" :disabled="isDisabled" />
+        <div class="input-group">
+          <label>Username</label>
+          <input v-model="username" type="text" :disabled="isDisabled" />
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input v-model="password" type="password" :disabled="isDisabled" @keyup.enter="() => handleSubmit()" />
+        </div>
+
+        <span v-if="authStore.error?.length" class="error-msg">{{ authStore.error }}</span>
+
+        <button class="login-sign-in" :disabled="isDisabled" @click="() => handleSubmit()">
+          {{ authStore.isLogging ? 'Authenticating...' : 'Sign In' }}
+        </button>
       </div>
-
-      <div class="input-group">
-        <label>Password</label>
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Enter password"
-          :disabled="isDisabled"
-          @keyup.enter="handleSubmit"
-        />
-      </div>
-
-      <p v-if="authStore.error?.length" class="error-msg">
-        {{ authStore.error }}
-      </p>
-
-      <button @click="handleSubmit" :disabled="isDisabled">
-        {{ authStore.isLogging ? 'Authenticating...' : 'Sign In' }}
-      </button>
-    </div>
-  </div>
+    </PageBodyV2>
+  </PageV2>
 </template>
 
 <style lang="scss" scoped>
-// Variables
 $bg-main: #121212;
 $bg-input: #1e1e1e;
 $border-color: #333;
@@ -68,20 +60,29 @@ $error-color: #ff5f5f;
 $text-muted: #888;
 
 .login-wrapper {
-  font-family: sans-serif;
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  flex-grow: 1;
+
+  max-width: 20rem;
+  padding: 1.5rem;
   background: $bg-main;
   color: white;
-  border-radius: 8px;
 
-  .status-box {
-    text-align: center;
-    color: $primary-color;
+  .login-title {
+    margin-bottom: 1.5rem;
   }
 
   .input-group {
+    width: 100%;
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
@@ -112,7 +113,10 @@ $text-muted: #888;
     margin-bottom: 10px;
   }
 
-  button {
+  .login-sign-in {
+    max-width: 10rem;
+    margin-top: 1.5rem;
+
     width: 100%;
     padding: 12px;
     background-color: $primary-color;
