@@ -1,13 +1,13 @@
-import { waitMs } from '@chanzor/utils';
 import { waitFrameMs } from '@chanzor/vue-utils';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import type { ImageModel } from '../image/image.model';
+import { useImageViewerPositionStore } from './image-viewer-position.store';
 
 export type ImageViewerState = 'opening' | 'opened' | 'closing' | 'closed';
 
-export function useImageViewerOverlay() {
+export const useImageViewerStore = defineStore('image-viewer', () => {
   const state = ref<ImageViewerState>('closed');
   const isActive = computed(() => {
     switch (state.value) {
@@ -31,21 +31,13 @@ export function useImageViewerOverlay() {
 
   const model = ref<ImageModel>();
 
-  const startX = ref(-1);
-  const startY = ref(-1);
-  const startWidth = ref(-1);
-  const startHeight = ref(-1);
-
   let time = 0;
 
-  const open = async (image: ImageModel): Promise<void> => {
+  async function open(image: ImageModel): Promise<void> {
     const now = (time = Date.now());
 
     model.value = image;
-    startX.value = model.value.holderPosition.screenX;
-    startY.value = model.value.holderPosition.screenY;
-    startWidth.value = model.value.holderPosition.width;
-    startHeight.value = model.value.holderPosition.height;
+    useImageViewerPositionStore().setPositionByModel(model.value);
 
     await waitFrameMs();
     if (now !== time) return;
@@ -56,50 +48,24 @@ export function useImageViewerOverlay() {
     if (now !== time) return;
 
     state.value = 'opened';
-  };
+  }
 
-  const close = async (): Promise<void> => {
+  async function close(): Promise<void> {
     const now = (time = Date.now());
 
-    if (model.value) {
-      startX.value = model.value.holderPosition.screenX;
-      startY.value = model.value.holderPosition.screenY;
-      startWidth.value = model.value.holderPosition.width;
-      startHeight.value = model.value.holderPosition.height;
-    }
+    if (model.value) useImageViewerPositionStore().setPositionByModel(model.value);
 
     await waitFrameMs();
     if (now !== time) return;
 
     state.value = 'closing';
 
-    await waitMs(700);
-    await waitFrameMs();
+    await waitFrameMs(700);
     if (now !== time) return;
 
     state.value = 'closed';
     model.value = undefined;
-  };
+  }
 
-  return {
-    state: computed(() => state.value),
-    isActive,
-    isShowing,
-
-    model: computed(() => model.value),
-
-    startX: computed(() => startX.value),
-    startY: computed(() => startY.value),
-    startWidth: computed(() => startWidth.value),
-    startHeight: computed(() => startHeight.value),
-
-    open,
-    close,
-  };
-}
-
-export const useImageViewerStore = defineStore('app', () => {
-  const imageViewerOverlay = useImageViewerOverlay();
-
-  return { ...imageViewerOverlay };
+  return { state: computed(() => state.value), isActive, isShowing, model: computed(() => model.value), open, close };
 });

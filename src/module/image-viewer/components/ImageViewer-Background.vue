@@ -1,18 +1,22 @@
 <script setup lang="ts">
-defineProps<{ width: number; height: number; top: number; left: number; showing: boolean; active: boolean }>();
+import { useImageViewerRefStore } from '../image-viewer-ref.store';
+import { useImageViewerStore } from '../image-viewer.store';
+
+const imageViewerStore = useImageViewerStore();
+const imageViewerRefStore = useImageViewerRefStore();
 </script>
 
 <template>
   <div
     class="image-viewer-overlay-background"
     :style="{
-      '--width': `${width}px`,
-      '--height': `${height}px`,
-      '--left': `calc(${left}px) - 1rem`,
-      '--top': `calc(${top}px - 1rem)`,
+      '--width': `${imageViewerRefStore.eleWidth}px`,
+      '--height': `${imageViewerRefStore.eleHeight}px`,
+      '--left': `calc(${imageViewerRefStore.eleLeft}px) - 1rem`,
+      '--top': `calc(${imageViewerRefStore.eleTop}px - 1rem)`,
     }"
-    :data-showing="showing"
-    :data-active="active"
+    :data-showing="imageViewerStore.isShowing"
+    :data-active="imageViewerStore.isActive"
   ></div>
 </template>
 

@@ -2,9 +2,9 @@
 import { computedAsync, debouncedRef, useWindowSize } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
-import type { ImageModel } from '@/module/image/image.model';
+import { useImageViewerStore } from '../image-viewer.store';
 
-const { model } = defineProps<{ model?: ImageModel; showing: boolean; active: boolean }>();
+const imageViewerStore = useImageViewerStore();
 
 const windowSize = useWindowSize();
 const debouncedWindowWidth = debouncedRef(windowSize.width, 1_000);
@@ -12,11 +12,11 @@ const debouncedWindowHeight = debouncedRef(windowSize.height, 1_000);
 
 const src = computedAsync<string | undefined>(async () => {
   if (debouncedWindowWidth.value > debouncedWindowHeight.value) {
-    return model?.getSrc(debouncedWindowHeight.value, undefined);
+    return imageViewerStore.model?.getSrc(debouncedWindowHeight.value, undefined);
   } else if (debouncedWindowWidth.value < debouncedWindowHeight.value) {
-    return model?.getSrc(undefined, debouncedWindowWidth.value);
+    return imageViewerStore.model?.getSrc(undefined, debouncedWindowWidth.value);
   } else {
-    return model?.getSrc(debouncedWindowWidth.value, debouncedWindowHeight.value);
+    return imageViewerStore.model?.getSrc(debouncedWindowWidth.value, debouncedWindowHeight.value);
   }
 });
 
@@ -24,9 +24,9 @@ const isLoading = ref(true);
 
 watch(src, () => (isLoading.value = true));
 
-const onLoad = (): void => {
+function onLoad(): void {
   isLoading.value = false;
-};
+}
 </script>
 
 <template>
@@ -51,9 +51,8 @@ const onLoad = (): void => {
 
     user-select: none;
     background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 1rem;
     overflow: hidden;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     transition: all 700ms ease;
   }
 
