@@ -2,18 +2,36 @@ import { newUniqueTimestamp } from '@chanzor/utils';
 
 import { API_SERVER } from '@/api/api';
 import { urlServerFilename } from '@/composables/urlServerFilename';
-import { ENV_ACCESS_TOKEN, ENV_BACKEND_API_BASE } from '@/config/env';
+import { ENV_BACKEND_API_BASE } from '@/config/env';
 
 import { useFileReaderStore } from '../file-reader/file-reader.store';
 import { IMAGE_ASPECT_RATIO_LIST } from './image-aspect-ratio.model';
 import { ColorPaletteModel } from './image-color-palette.model';
 import { ImagePositionModel } from './image-position.model';
 
-// TODO: use blob
-function getApiImgPath(filename: string): string {
+export function getApiImgPath(filename: string): string {
   const url = new URL(`${ENV_BACKEND_API_BASE}/api/img/one/${filename}`);
-  url.searchParams.append('t', ENV_ACCESS_TOKEN);
   return url.toString();
+}
+
+export async function getApiImgDownload(filename: string): Promise<void> {
+  // 1. Request the file with responseType set to 'blob'
+  const response = await API_SERVER.get(`/api/img/one/${filename}/download`, { responseType: 'blob' });
+
+  // 2. Create a temporary Blob Object URL
+  const blob = new Blob([response.data]);
+  const url = window.URL.createObjectURL(blob);
+
+  // 3. Create an <a> element and trigger a click programmatically
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename); // sets the downloaded file's name
+  document.body.appendChild(link);
+  link.click();
+
+  // 4. Clean up DOM and revoke Object URL to free memory
+  link.remove();
+  window.URL.revokeObjectURL(url);
 }
 
 export abstract class ImageModel {
@@ -41,6 +59,8 @@ export abstract class ImageModel {
 // FILE
 
 export class ImageFileModel extends ImageModel {
+  readonly type = 'file';
+
   src: string = '';
 
   constructor(readonly file: File) {
@@ -72,6 +92,8 @@ export class ImageFileModel extends ImageModel {
 export type ImagePathData = { filename?: string };
 
 export class ImagePathModel extends ImageModel {
+  readonly type = 'path';
+
   readonly fullPath: string;
   readonly colorPalette: ColorPaletteModel;
 
@@ -91,6 +113,8 @@ export class ImagePathModel extends ImageModel {
 export type ImageBlobData = { filename?: string };
 
 export class ImageBlobModel extends ImageModel {
+  readonly type = 'blob';
+
   readonly fullPath: string;
   readonly colorPalette: ColorPaletteModel;
 

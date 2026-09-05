@@ -1,27 +1,41 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core';
-import { useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store.ts';
 
+import { ImageBlobModel, ImagePathModel, getApiImgDownload } from '../image/image.model.ts';
 import { useImageViewerPositionStore } from './image-viewer-position.store.ts';
 import { useImageViewerRefStore } from './image-viewer-ref.store.ts';
 
 import ImageViewerBackground from './components/ImageViewer-Background.vue';
 import ImageViewerImage from './components/ImageViewer-Image.vue';
 
-const FEATURE_DOWNLOAD = false;
+const FEATURE_DOWNLOAD = true;
 
 const imageViewerStore = useImageViewerStore();
 const imageViewerRefStore = useImageViewerRefStore();
 const imageViewerPositionStore = useImageViewerPositionStore();
 
 const imageRef = useTemplateRef('imageRef');
-onClickOutside(imageRef, () => {
-  if (imageViewerStore.isShowing) imageViewerStore.close();
-});
+const actionbarRef = useTemplateRef('actionbarRef');
+
+onClickOutside(
+  imageRef,
+  () => {
+    if (imageViewerStore.isShowing) imageViewerStore.close();
+  },
+  { ignore: [actionbarRef] },
+);
 
 watch(imageRef, () => (imageViewerRefStore.eleRef = imageRef.value), { immediate: true });
+
+const isDownloadable = computed(() => {
+  return (
+    (imageViewerStore.model instanceof ImageBlobModel && imageViewerStore.model.type === 'blob') ||
+    (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
+  );
+});
 </script>
 
 <template>
@@ -36,7 +50,7 @@ watch(imageRef, () => (imageViewerRefStore.eleRef = imageRef.value), { immediate
     :data-active="imageViewerStore.isActive"
     :data-showing="imageViewerStore.isShowing"
   >
-    <div class="image-viewer-overlay-actionbar">
+    <div ref="actionbarRef" class="image-viewer-overlay-actionbar">
       <div class="actionbar-group left">
         <button type="button" aria-label="Close viewer" title="Close" @click="() => imageViewerStore.close()">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -47,8 +61,22 @@ watch(imageRef, () => (imageViewerRefStore.eleRef = imageRef.value), { immediate
         </button>
       </div>
 
-      <div v-if="FEATURE_DOWNLOAD" class="actionbar-group right">
-        <button type="button" aria-label="Download image" title="Download" @click="() => {}">
+      <div v-if="FEATURE_DOWNLOAD && isDownloadable" class="actionbar-group right">
+        <button
+          type="button"
+          aria-label="Download image"
+          title="Download"
+          @click="
+            () => {
+              if (
+                (imageViewerStore.model instanceof ImageBlobModel && imageViewerStore.model.type === 'blob') ||
+                (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
+              ) {
+                getApiImgDownload(imageViewerStore.model.filename);
+              }
+            }
+          "
+        >
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
             <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
           </svg>

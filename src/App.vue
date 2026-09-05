@@ -29,6 +29,8 @@ const authStore = useAuthStore();
   align-items: stretch;
   justify-content: stretch;
 
+  position: relative;
+
   .app-auth-loading {
     position: fixed;
     inset: 0;
