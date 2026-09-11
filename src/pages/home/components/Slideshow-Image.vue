@@ -16,6 +16,7 @@ const isVisible = useElementVisibility(selfRef);
 const isVisibleDelay = useThrottle(isVisible, 500, true, true);
 
 const isTriggeredLoad = ref(false);
+const isImageLoaded = ref(false);
 const isHovering = computedAsync(async () => {
   if (!model.isHovering) await waitMs(200);
   return model.isHovering;
@@ -40,9 +41,9 @@ const style = computed<StyleValue>(() => {
     top: `${model.holderPosition.y}px`,
     width: `${model.holderPosition.width}px`,
     height: `${model.holderPosition.height}px`,
-    '--color-muted': `${colorPalette.value?.muted ?? 'rgba(255, 255, 255, 0.2)'}`,
-    '--color-muted-dark': `${colorPalette.value?.mutedDark ?? 'rgba(255, 255, 255, 0.2)'}`,
-    '--color-muted-light': `${colorPalette.value?.mutedLight ?? 'rgba(255, 255, 255, 0.2)'}`,
+    '--color-muted': `${colorPalette.value?.muted ?? 'rgba(255, 255, 255, 0.1)'}`,
+    '--color-muted-dark': `${colorPalette.value?.mutedDark ?? 'rgba(255, 255, 255, 0.05)'}`,
+    '--color-muted-light': `${colorPalette.value?.mutedLight ?? 'rgba(255, 255, 255, 0.25)'}`,
     '--color-vibrant': `${colorPalette.value?.vibrant ?? 'rgba(255, 255, 255, 0.2)'}`,
     '--color-vibrant-dark': `${colorPalette.value?.vibrantDark ?? 'rgba(255, 255, 255, 0.2)'}`,
     '--color-vibrant-light': `${colorPalette.value?.vibrantLight ?? 'rgba(255, 255, 255, 0.2)'}`,
@@ -67,7 +68,7 @@ onMounted(() => onTriggerLoad());
 
 <template>
   <div ref="selfRef" class="home-image-content" :style="style" :data-hovering="isHovering">
-    <img v-if="src?.length" :src="src" />
+    <img v-if="src?.length" :src="src" :class="{ 'is-loaded': isImageLoaded }" @load="() => (isImageLoaded = true)" />
   </div>
 </template>
 
@@ -88,7 +89,14 @@ onMounted(() => onTriggerLoad());
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 300ms ease;
+    opacity: 0;
+    transition:
+      opacity 300ms ease,
+      transform 300ms ease;
+
+    &.is-loaded {
+      opacity: 1;
+    }
   }
 
   &[data-hovering='true'] {

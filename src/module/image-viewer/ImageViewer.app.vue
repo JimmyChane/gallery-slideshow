@@ -50,41 +50,41 @@ const isDownloadable = computed(() => {
     :data-active="imageViewerStore.isActive"
     :data-showing="imageViewerStore.isShowing"
   >
-    <div ref="actionbarRef" class="image-viewer-overlay-actionbar">
-      <div class="actionbar-group left">
-        <button type="button" aria-label="Close viewer" title="Close" @click="() => imageViewerStore.close()">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path
-              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <div v-if="FEATURE_DOWNLOAD && isDownloadable" class="actionbar-group right">
-        <button
-          type="button"
-          aria-label="Download image"
-          title="Download"
-          @click="
-            () => {
-              if (
-                (imageViewerStore.model instanceof ImageBlobModel && imageViewerStore.model.type === 'blob') ||
-                (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
-              ) {
-                getApiImgDownload(imageViewerStore.model.filename);
-              }
-            }
-          "
-        >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
-          </svg>
-        </button>
-      </div>
-    </div>
-
     <div class="image-viewer-overlay-body">
+      <div ref="actionbarRef" class="image-viewer-overlay-actionbar">
+        <div class="actionbar-group left">
+          <button type="button" aria-label="Close viewer" title="Close" @click="() => imageViewerStore.close()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div v-if="FEATURE_DOWNLOAD && isDownloadable" class="actionbar-group right">
+          <button
+            type="button"
+            aria-label="Download image"
+            title="Download"
+            @click="
+              () => {
+                if (
+                  (imageViewerStore.model instanceof ImageBlobModel && imageViewerStore.model.type === 'blob') ||
+                  (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
+                ) {
+                  getApiImgDownload(imageViewerStore.model.filename);
+                }
+              }
+            "
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
       <div class="image-viewer-overlay-content">
         <ImageViewerBackground />
         <ImageViewerImage ref="imageRef" />
@@ -177,11 +177,11 @@ const isDownloadable = computed(() => {
     position: relative;
 
     width: 100%;
-    height: calc(100dvh - var(--actionbar-height));
+    height: 100dvh;
 
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     overflow: hidden;
 
     .image-viewer-overlay-content {
