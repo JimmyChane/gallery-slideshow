@@ -8,6 +8,9 @@ import { ImageBlobModel, ImagePathModel, getApiImgDownload } from '../image/imag
 import { useImageViewerPositionStore } from './image-viewer-position.store.ts';
 import { useImageViewerRefStore } from './image-viewer-ref.store.ts';
 
+import CloseIcon from '@/components/icon/Close.icon.vue';
+import DownloadIcon from '@/components/icon/Download.icon.vue';
+
 import ImageViewerBackground from './components/ImageViewer-Background.vue';
 import ImageViewerImage from './components/ImageViewer-Image.vue';
 
@@ -54,11 +57,7 @@ const isDownloadable = computed(() => {
       <div ref="actionbarRef" class="image-viewer-overlay-actionbar">
         <div class="actionbar-group left">
           <button type="button" aria-label="Close viewer" title="Close" @click="() => imageViewerStore.close()">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path
-                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-              />
-            </svg>
+            <CloseIcon />
           </button>
         </div>
 
@@ -78,9 +77,7 @@ const isDownloadable = computed(() => {
               }
             "
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
-            </svg>
+            <DownloadIcon />
           </button>
         </div>
       </div>
@@ -136,6 +133,10 @@ const isDownloadable = computed(() => {
       flex-direction: row;
       align-items: center;
       gap: 0.75rem;
+
+      & > * {
+        font-size: 1.15rem;
+      }
     }
 
     button {
