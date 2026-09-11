@@ -2,8 +2,10 @@
 import { onClickOutside } from '@vueuse/core';
 import { computed, useTemplateRef, watch } from 'vue';
 
+import { FEATURE_ADVANCE_DOWNLOAD, FEATURE_DOWNLOAD } from '@/feature.ts';
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store.ts';
 
+import { useDownloadDialog } from '../download/useDownload.dialog.ts';
 import { ImageBlobModel, ImagePathModel, getApiImgDownload } from '../image/image.model.ts';
 import { useImageViewerPositionStore } from './image-viewer-position.store.ts';
 import { useImageViewerRefStore } from './image-viewer-ref.store.ts';
@@ -13,8 +15,6 @@ import DownloadIcon from '@/components/icon/Download.icon.vue';
 
 import ImageViewerBackground from './components/ImageViewer-Background.vue';
 import ImageViewerImage from './components/ImageViewer-Image.vue';
-
-const FEATURE_DOWNLOAD = true;
 
 const imageViewerStore = useImageViewerStore();
 const imageViewerRefStore = useImageViewerRefStore();
@@ -39,6 +39,8 @@ const isDownloadable = computed(() => {
     (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
   );
 });
+
+const { reopen } = useDownloadDialog();
 </script>
 
 <template>
@@ -72,7 +74,11 @@ const isDownloadable = computed(() => {
                   (imageViewerStore.model instanceof ImageBlobModel && imageViewerStore.model.type === 'blob') ||
                   (imageViewerStore.model instanceof ImagePathModel && imageViewerStore.model.type === 'path')
                 ) {
-                  getApiImgDownload(imageViewerStore.model.filename);
+                  if (FEATURE_ADVANCE_DOWNLOAD) {
+                    reopen({ model: imageViewerStore.model });
+                  } else {
+                    getApiImgDownload(imageViewerStore.model.filename);
+                  }
                 }
               }
             "

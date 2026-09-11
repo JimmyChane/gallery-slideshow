@@ -2,10 +2,13 @@
 import { RouterView } from 'vue-router';
 
 import { useAuthStore } from './module/auth/auth.store.ts';
+import { useDialogStore } from './module/dialog/dialog.store.ts';
 
+import OverlayDialog from './module/dialog/OverlayDialog.vue';
 import ImageViewerApp from './module/image-viewer/ImageViewer.app.vue';
 
 const authStore = useAuthStore();
+const dialogStore = useDialogStore();
 </script>
 
 <template>
@@ -17,6 +20,13 @@ const authStore = useAuthStore();
     <RouterView v-else style="z-index: 1" />
 
     <ImageViewerApp style="z-index: 2" />
+
+    <OverlayDialog
+      v-for="overlay of dialogStore.overlays"
+      :style="{ 'z-index': `${3 + dialogStore.overlays.length} ` }"
+      :key="overlay.id"
+      :dialog-popup="overlay"
+    />
   </div>
 </template>
 
