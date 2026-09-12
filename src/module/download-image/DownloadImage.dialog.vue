@@ -15,9 +15,9 @@ import CustomIcon from '@/components/icon/Custom.icon.vue';
 import LinkIcon from '@/components/icon/Link.icon.vue';
 import PreviewIcon from '@/components/icon/Preview.icon.vue';
 
-export type DownloadDialogProps = { model: ImageBlobModel | ImagePathModel };
+export type DownloadImageDialogProps = { model: ImageBlobModel | ImagePathModel };
 
-const { dialogPopup } = defineProps<DialogProps<DownloadDialogProps>>();
+const { dialogPopup } = defineProps<DialogProps<DownloadImageDialogProps>>();
 
 const formats = [
   { id: 'JPG', label: 'JPG', hint: 'Universal compatibility / Lossy', ext: 'jpg', mime: 'image/jpeg' },
