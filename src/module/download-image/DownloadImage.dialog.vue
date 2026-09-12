@@ -1,35 +1,45 @@
 <script setup lang="ts">
-import { waitMs } from '@chanzor/utils';
 import type { DialogProps } from '@chanzor/vue-overlay';
-import { computed, ref, watch } from 'vue';
+import { type Component, computed, ref, watch } from 'vue';
 
-import {
-  type ImageBlobModel,
-  type ImagePathModel,
-  getApiImgDownload,
-  urlServerFilename,
-} from '@/module/image/image.model.ts';
+import { type ImageBlobModel, type ImagePathModel, getApiImgDownload } from '@/module/image/image.model.ts';
 
 import CloseIcon from '@/components/icon/Close.icon.vue';
 import CustomIcon from '@/components/icon/Custom.icon.vue';
-import LinkIcon from '@/components/icon/Link.icon.vue';
 import PreviewIcon from '@/components/icon/Preview.icon.vue';
 
 export type DownloadImageDialogProps = { model: ImageBlobModel | ImagePathModel };
 
 const { dialogPopup } = defineProps<DialogProps<DownloadImageDialogProps>>();
 
-const formats = [
-  { id: 'JPG', label: 'JPG', hint: 'Universal compatibility / Lossy', ext: 'jpg', mime: 'image/jpeg' },
-  { id: 'PNG', label: 'PNG', hint: 'Lossless / Optimized encoding', ext: 'png', mime: 'image/png' },
-  { id: 'WebP', label: 'WebP', hint: 'High efficiency / Modern web', ext: 'webp', mime: 'image/webp' },
-] as const;
+type FileFormatType = Readonly<{ id: string; label: string; hint: string; ext: string; mime: string }>;
+type DimensionPresetType = Readonly<{ id: PresetType; label: string; icon?: Component }>;
 
-type FormatType = (typeof formats)[number]['id'];
+const FORMAT_JPG = {
+  id: 'jpg',
+  label: 'JPG',
+  hint: 'Universal compatibility / Lossy',
+  ext: 'jpg',
+  mime: 'image/jpeg',
+} satisfies FileFormatType;
+const formats = [
+  FORMAT_JPG,
+  { id: 'png', label: 'PNG', hint: 'Lossless / Optimized encoding', ext: 'png', mime: 'image/png' },
+  { id: 'webp', label: 'WebP', hint: 'High efficiency / Modern web', ext: 'webp', mime: 'image/webp' },
+] satisfies FileFormatType[];
+const DIMENSION_ORIGINAL = { id: 'original', label: 'Original', icon: PreviewIcon } satisfies DimensionPresetType;
+const DIEMNSION_CUSTOM = { id: 'custom', label: 'Custom', icon: CustomIcon } satisfies DimensionPresetType;
+const dimensions = [
+  DIMENSION_ORIGINAL,
+  { id: '1080p', label: '1080p (1920x1080)' },
+  { id: '720p', label: '720p (1280x720)' },
+  DIEMNSION_CUSTOM,
+] satisfies DimensionPresetType[];
+
 type PresetType = 'original' | '1080p' | '720p' | 'custom';
 
-const selectedFormat = ref<FormatType>('JPG');
-const selectedPreset = ref<PresetType>('original');
+const selectedFormat = ref<FileFormatType>(FORMAT_JPG);
+const selectedPreset = ref<DimensionPresetType>(DIMENSION_ORIGINAL);
 const lockRatio = ref(true);
 
 const width = ref(1920);
@@ -38,14 +48,11 @@ const height = ref(1080);
 const thumbnailSrc = ref<string>('');
 let thumbnailSrcTime = 0;
 
-const isCopied = ref(false);
-let isCopiedTime = 0;
-
 const isDownloading = ref(false);
 let isDownloadingTime = 0;
 
 const currentFormatInfo = computed(() => {
-  return formats.find((f) => f.id === selectedFormat.value) || formats[0];
+  return formats.find((f) => f.id === selectedFormat.value.id);
 });
 
 const filename = computed(() => dialogPopup.data?.model?.filename);
@@ -80,15 +87,15 @@ watch(
   { immediate: true },
 );
 
-function selectPreset(preset: PresetType): void {
+function selectPreset(preset: DimensionPresetType): void {
   selectedPreset.value = preset;
-  if (preset === 'original') {
+  if (preset.id === 'original') {
     width.value = -1;
     height.value = -1;
-  } else if (preset === '1080p') {
+  } else if (preset.id === '1080p') {
     width.value = 1920;
     height.value = 1080;
-  } else if (preset === '720p') {
+  } else if (preset.id === '720p') {
     width.value = 1280;
     height.value = 720;
   }
@@ -99,7 +106,7 @@ function onWidthInput(event: Event): void {
   if (isNaN(val) || val <= 0) return;
 
   width.value = val;
-  selectedPreset.value = 'custom';
+  selectedPreset.value = DIEMNSION_CUSTOM;
 
   if (lockRatio.value && width.value > 0) {
     const ratio = height.value / width.value;
@@ -112,31 +119,12 @@ function onHeightInput(event: Event): void {
   if (isNaN(val) || val <= 0) return;
 
   height.value = val;
-  selectedPreset.value = 'custom';
+  selectedPreset.value = DIEMNSION_CUSTOM;
 
   if (lockRatio.value && height.value > 0) {
     const ratio = width.value / height.value;
     width.value = Math.max(1, Math.round(val * ratio));
   }
-}
-
-async function copyDirectLink() {
-  const now = (isCopiedTime = Date.now());
-  const link = urlServerFilename(dialogPopup.data.model.fullPath, {
-    width: width.value,
-    height: height.value,
-  }).toString();
-
-  const error = await navigator.clipboard.writeText(link).catch((e: Error) => e);
-  if (now !== isCopiedTime) return;
-  if (error instanceof Error) {
-    console.error('Failed to copy direct link', error);
-    return;
-  }
-  isCopied.value = true;
-  await waitMs(2000);
-  if (now !== isCopiedTime) return;
-  isCopied.value = false;
 }
 
 async function triggerDownload() {
@@ -149,14 +137,18 @@ async function triggerDownload() {
     .then(async () => {
       const model = dialogPopup.data.model;
 
-      switch (selectedPreset.value) {
+      switch (selectedPreset.value.id) {
         case 'original':
-          await getApiImgDownload(model.filename);
+          await getApiImgDownload(model.filename, { format: selectedFormat.value.id });
           break;
         case '1080p':
         case '720p':
         case 'custom':
-          await getApiImgDownload(model.filename, { width: width.value, height: height.value });
+          await getApiImgDownload(model.filename, {
+            format: selectedFormat.value.id,
+            width: width.value,
+            height: height.value,
+          });
           break;
       }
     })
@@ -202,11 +194,10 @@ async function triggerDownload() {
       </div>
     </div>
 
-    <!-- File Format Section -->
     <div class="section-group">
       <div class="section-header">
         <span class="section-label">FILE FORMAT</span>
-        <span class="section-hint">{{ currentFormatInfo.hint }}</span>
+        <span v-if="currentFormatInfo" class="section-hint">{{ currentFormatInfo.hint }}</span>
       </div>
 
       <div class="format-segmented-control">
@@ -215,15 +206,14 @@ async function triggerDownload() {
           :key="item.id"
           type="button"
           class="format-tab-btn"
-          :class="{ active: selectedFormat === item.id }"
-          @click="selectedFormat = item.id"
+          :class="{ active: selectedFormat.id === item.id }"
+          @click="selectedFormat = item"
         >
           {{ item.label }}
         </button>
       </div>
     </div>
 
-    <!-- Select Preset Section -->
     <div class="section-group">
       <div class="section-header">
         <span class="section-label">SELECT PRESET</span>
@@ -231,43 +221,14 @@ async function triggerDownload() {
 
       <div class="preset-chips-row">
         <button
+          v-for="item in dimensions as DimensionPresetType[]"
           type="button"
           class="preset-chip"
-          :class="{ active: selectedPreset === 'original' }"
-          @click="selectPreset('original')"
+          :class="{ active: selectedPreset.id === item.id }"
+          @click="() => selectPreset(item)"
         >
-          <PreviewIcon class="preset-icon" />
-          <span>Original</span>
-        </button>
-
-        <button
-          type="button"
-          class="preset-chip"
-          :class="{ active: selectedPreset === '1080p' }"
-          @click="selectPreset('1080p')"
-        >
-          <span>1080p (1920×1080)</span>
-        </button>
-
-        <button
-          type="button"
-          class="preset-chip"
-          :class="{ active: selectedPreset === '720p' }"
-          @click="selectPreset('720p')"
-        >
-          <span>720p (1280×720)</span>
-        </button>
-      </div>
-
-      <div class="preset-chips-subrow">
-        <button
-          type="button"
-          class="preset-chip"
-          :class="{ active: selectedPreset === 'custom' }"
-          @click="selectedPreset = 'custom'"
-        >
-          <CustomIcon class="preset-icon" />
-          <span>Custom</span>
+          <component v-if="item.icon" class="preset-icon" :is="item.icon" />
+          <span>{{ item.label }}</span>
         </button>
       </div>
     </div>
@@ -301,12 +262,8 @@ async function triggerDownload() {
       </div>
     </div>
 
-    <!-- Footer Actions -->
     <div class="dialog-footer">
-      <button type="button" class="btn-copy-link" @click="copyDirectLink">
-        <LinkIcon class="btn-icon" />
-        <span>{{ isCopied ? 'Copied Link!' : 'Copy Direct Link' }}</span>
-      </button>
+      <div class="footer-action-left"></div>
 
       <div class="footer-action-right">
         <button type="button" class="btn-cancel" @click="() => dialogPopup.close()">Cancel</button>
@@ -335,6 +292,8 @@ async function triggerDownload() {
   flex-direction: column;
   gap: 1.25rem;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.6);
+
+  overflow-y: auto;
 }
 
 /* Header */
@@ -499,10 +458,9 @@ async function triggerDownload() {
   }
 }
 
-/* Format Segmented Control */
 .format-segmented-control {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
   background-color: #171825;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 0.6rem;

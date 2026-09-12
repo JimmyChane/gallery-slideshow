@@ -18,13 +18,13 @@ function queryDimension(option?: { width?: number; height?: number }): URLSearch
   return searchParams;
 }
 
-// function parseName(filename: string) {
-//   const parts = filename.split('.');
-//   if (parts.length > 1) {
-//     return parts.slice(0, -1).join('.');
-//   }
-//   return filename;
-// }
+function parseName(filename: string) {
+  const parts = filename.split('.');
+  if (parts.length > 1) {
+    return parts.slice(0, -1).join('.');
+  }
+  return filename;
+}
 
 // function parseExt(filename: string) {
 //   const parts = filename.split('.');
@@ -44,12 +44,20 @@ export function urlServerFilename(filenameUrl: string, option?: { width?: number
   return url;
 }
 
-export function getApiImgPath(filename: string): string {
+export function getApiImgPathByFilename(filename: string): string {
   const url = new URL(`${ENV_BACKEND_API_BASE}/api/img/one/${filename}`);
   return url.toString();
 }
 
-export async function getApiImgDownload(filename: string, option?: { width?: number; height?: number }): Promise<void> {
+export async function getApiImgDownload(
+  filename: string,
+  option?: { format?: string; width?: number; height?: number },
+): Promise<void> {
+  if (option?.format?.length) {
+    const name = parseName(filename);
+    filename = `${name}.${option.format}`;
+  }
+
   const query = queryDimension(option);
   const link = query ? `/api/img/one/${filename}/download?${query.toString()}` : `/api/img/one/${filename}/download`;
   const res = await API_SERVER.get(link, { responseType: 'blob' });
@@ -132,7 +140,7 @@ export class ImagePathModel extends ImageModel {
 
   constructor(readonly filename: string) {
     super();
-    this.fullPath = getApiImgPath(filename);
+    this.fullPath = getApiImgPathByFilename(filename);
     this.colorPalette = new ColorPaletteModel(filename);
   }
 
@@ -153,7 +161,7 @@ export class ImageBlobModel extends ImageModel {
 
   constructor(readonly filename: string) {
     super();
-    this.fullPath = getApiImgPath(filename);
+    this.fullPath = getApiImgPathByFilename(filename);
     this.colorPalette = new ColorPaletteModel(filename);
   }
 
