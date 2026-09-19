@@ -6,7 +6,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { API_SERVER } from '@/api/api';
-import { ENV_BACKEND_API_BASE } from '@/config/env';
+import { ENV_BACKEND_API_BASE } from '@/env';
 import { ROUTE_HOME, ROUTE_LOGIN } from '@/router/router';
 
 export class UserModel {

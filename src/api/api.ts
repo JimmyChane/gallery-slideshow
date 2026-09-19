@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { ENV_BACKEND_API_BASE } from '@/config/env';
+import { ENV_BACKEND_API_BASE } from '@/env';
 import { useAuthRefreshStore } from '@/module/auth.store';
 
 export const API_SERVER = axios.create({

@@ -1,7 +1,7 @@
 import { newUniqueTimestamp } from '@chanzor/utils';
 
 import { API_SERVER } from '@/api/api';
-import { ENV_BACKEND_API_BASE } from '@/config/env';
+import { ENV_BACKEND_API_BASE } from '@/env';
 
 import { useFileReaderStore } from './file-reader.store';
 
