@@ -11,7 +11,7 @@ import {
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
-import type { ImageModel } from '@/module/image/image.model';
+import type { ImageModel } from '@/module/image.model';
 
 const props = defineProps<{ model: ImageModel }>();
 

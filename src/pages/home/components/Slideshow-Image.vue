@@ -4,8 +4,7 @@ import { computedAsync, useElementVisibility, useThrottle } from '@vueuse/core';
 import { type StyleValue, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store';
-import type { ColorPaletteData } from '@/module/image/image-color-palette.model';
-import { ImageBlobModel, ImageModel, ImagePathModel } from '@/module/image/image.model';
+import { type ColorPaletteData, ImageBlobModel, ImageModel, ImagePathModel } from '@/module/image.model';
 
 const { model } = defineProps<{ model: ImageModel }>();
 

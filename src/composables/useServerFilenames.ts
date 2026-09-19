@@ -2,7 +2,7 @@ import { type MaybeUndefined, optArray } from '@chanzor/utils';
 import { ref } from 'vue';
 
 import { API_SERVER } from '@/api/api';
-import type { ImagePathData } from '@/module/image/image.model';
+import type { ImagePathData } from '@/module/image.model';
 
 async function getApiImgList(): Promise<ImagePathData[]> {
   const result = await API_SERVER.get<MaybeUndefined<ImagePathData[]>>('/api/img/list');

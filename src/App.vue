@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 
-import { useAuthStore } from './module/auth/auth.store.ts';
+import { useAuthStore } from './module/auth.store.ts';
 import { useDialogStore } from './module/dialog/dialog.store.ts';
 
 import OverlayDialog from './module/dialog/OverlayDialog.vue';

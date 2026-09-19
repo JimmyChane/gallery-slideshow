@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import { ImageFileModel, type ImageModel } from '@/module/image/image.model';
+import { ImageFileModel, type ImageModel } from '@/module/image.model';
 
 const FILE_TYPES = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { useAuthStore } from '@/module/auth/auth.store';
+import { useAuthStore } from '@/module/auth.store';
 import { ROUTE_HOME } from '@/router/router';
 
 import PageV2 from '@/components/page-v2/Page-v2.vue';

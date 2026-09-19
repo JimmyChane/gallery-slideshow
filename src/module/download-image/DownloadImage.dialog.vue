@@ -2,7 +2,7 @@
 import type { DialogProps } from '@chanzor/vue-overlay';
 import { type Component, computed, ref, watch } from 'vue';
 
-import { type ImageBlobModel, type ImagePathModel, getApiImgDownload } from '@/module/image/image.model.ts';
+import { type ImageBlobModel, type ImagePathModel, getApiImgDownload } from '@/module/image.model';
 
 import CloseIcon from '@/components/icon/Close.icon.vue';
 import CustomIcon from '@/components/icon/Custom.icon.vue';

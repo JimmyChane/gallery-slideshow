@@ -3,10 +3,7 @@ import { newUniqueTimestamp } from '@chanzor/utils';
 import { API_SERVER } from '@/api/api';
 import { ENV_BACKEND_API_BASE } from '@/config/env';
 
-import { useFileReaderStore } from '../file-reader/file-reader.store';
-import { IMAGE_ASPECT_RATIO_LIST } from './image-aspect-ratio.model';
-import { ColorPaletteModel } from './image-color-palette.model';
-import { ImagePositionModel } from './image-position.model';
+import { useFileReaderStore } from './file-reader.store';
 
 function queryDimension(option?: { width?: number; height?: number }): URLSearchParams | undefined {
   if (option === undefined) return;
@@ -74,6 +71,66 @@ export async function getApiImgDownload(
   anchor.remove();
   window.URL.revokeObjectURL(url);
 }
+
+// ASPECT RATIO
+
+export type AspectRatioModel = { readonly value: number; readonly ratio: [number, number] };
+
+export const IMAGE_ASPECT_RATIO_LIST: AspectRatioModel[] = [
+  { value: 1, ratio: [1, 1] },
+  { value: 4 / 3, ratio: [4, 3] },
+  { value: 16 / 9, ratio: [16, 9] },
+  { value: 3 / 2, ratio: [3, 2] },
+  { value: 21 / 9, ratio: [21, 9] },
+];
+
+// POSITION
+
+export class ImagePositionModel {
+  width: number = -1;
+  height: number = -1;
+  x: number = -1;
+  y: number = -1;
+
+  screenX: number = -1;
+  screenY: number = -1;
+}
+
+// COLOR PALLETE
+
+async function getApiImgPalette(filename: string): Promise<ColorPaletteData> {
+  const result = await API_SERVER.get<ColorPaletteData>(`/api/img/one/${filename}/palette`);
+  return result.data;
+}
+
+export type ColorPaletteData = {
+  vibrant?: string;
+  vibrantDark?: string;
+  vibrantLight?: string;
+  muted?: string;
+  mutedDark?: string;
+  mutedLight?: string;
+};
+
+export class ColorPaletteModel {
+  private data?: Readonly<ColorPaletteData>;
+
+  constructor(readonly filename: string) {}
+
+  async getColorPalette(): Promise<Readonly<ColorPaletteData> | undefined> {
+    if (this.data) return this.data;
+
+    const dataFetched = await getApiImgPalette(this.filename).catch((e: Error) => e);
+    if (dataFetched instanceof Error) {
+      console.error(dataFetched);
+      this.data = undefined;
+    }
+
+    return this.data;
+  }
+}
+
+// MODEL
 
 export abstract class ImageModel {
   readonly id = newUniqueTimestamp();

@@ -3,12 +3,14 @@ import { onClickOutside } from '@vueuse/core';
 import { computed, useTemplateRef, watch } from 'vue';
 
 import { FEATURE_ADVANCE_DOWNLOAD, FEATURE_DOWNLOAD } from '@/feature.ts';
-import { useImageViewerStore } from '@/module/image-viewer/image-viewer.store.ts';
+import {
+  useImageViewerPositionStore,
+  useImageViewerRefStore,
+  useImageViewerStore,
+} from '@/module/image-viewer/image-viewer.store.ts';
 
 import { useDownloadImageDialog } from '../download-image/useDownloadImage.dialog.ts';
-import { ImageBlobModel, ImagePathModel, getApiImgDownload } from '../image/image.model.ts';
-import { useImageViewerPositionStore } from './image-viewer-position.store.ts';
-import { useImageViewerRefStore } from './image-viewer-ref.store.ts';
+import { ImageBlobModel, ImagePathModel, getApiImgDownload } from '../image.model.ts';
 
 import CloseIcon from '@/components/icon/Close.icon.vue';
 import DownloadIcon from '@/components/icon/Download.icon.vue';
